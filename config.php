@@ -20,17 +20,3 @@ define('DIR_UPLOAD', '/var/www/html/system/upload/');
 define('DIR_MODIFICATION', '/var/www/html/system/modification/');
 define('DIR_LOGS', '/var/www/html/system/logs/');
 
-// DB
-/*define('DB_DRIVER', 'mysqli');
-define('DB_HOSTNAME', 'localhost');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '$Admin%1123');
-define('DB_DATABASE', 'rothrugs');
-define('DB_PREFIX', 'oc_');*/
-
-define('DB_DRIVER', 'mysqli');
-define('DB_HOSTNAME', 'roth.cs9tu0y4nwdu.us-west-2.rds.amazonaws.com');
-define('DB_USERNAME', 'admin');
-define('DB_PASSWORD', '$8dFw191943w');
-define('DB_DATABASE', 'oc_live');
-define('DB_PREFIX', 'oc_');
