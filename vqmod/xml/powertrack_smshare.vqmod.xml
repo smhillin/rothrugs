@@ -1,0 +1,22 @@
+<modification>
+    
+    <id><![CDATA[powertrack-oc22]]></id>
+    <version><![CDATA[5.0.1]]></version>
+    <author><![CDATA[support@prowebtec.com − https://www.prowebtec.com]]></author>
+    <vqmver><![CDATA[2.6.2]]></vqmver>
+    
+    
+    
+    
+    
+    <file error="skip" name="system/component/smshare/react.php">
+        <operation>
+            <search position="after"><![CDATA[hook_24ce6]]></search>
+            <add><![CDATA[
+                $this->load->helper('powertrack');
+                $sms_body = replace_powertrack_variables_in_sms($sms_body, $post_data, $order_info, $this);      
+            ]]></add>
+        </operation>
+    </file>
+    
+</modification>

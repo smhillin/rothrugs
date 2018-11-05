@@ -1,0 +1,27 @@
+<modification>
+    
+    <id><![CDATA[powertrack-oc22]]></id>
+    <version><![CDATA[5.0.1]]></version>
+    <author><![CDATA[support@prowebtec.com − https://www.prowebtec.com]]></author>
+    <vqmver><![CDATA[2.6.2]]></vqmver>
+    
+    
+    
+    
+    
+    <file name="admin/model/sale/order.php">
+        <!-- 
+        The search pattern is a portion of the line of code. 
+        This is to be friendly with an other module (Delete Order History v2 by The Krotek) which 
+        modify the begining of the line and thus would break powertrack here.
+         -->
+        <operation>
+            <search position="replace"><![CDATA[oh.notify FROM]]></search>
+            <add><![CDATA[oh.powertrack_trackcode, oh.powertrack_carrier, oh.notify FROM]]></add>
+        </operation>
+    </file>
+        
+</modification>
+
+
+  

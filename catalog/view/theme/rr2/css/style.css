@@ -1,0 +1,236 @@
+/****** All Basic ******/
+
+*{box-sizing:border-box; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -o-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box;}
+body, html{margin:0 0; padding:0 0; }
+.no-padding{padding: 0 0 !important;}
+.no-padding-left{padding-left:0 !important;}
+.no-padding-right{padding-right:0!important;}
+.no-padding-bottom{padding-bottom:0!important;}
+.no-margin{margin: 0 0 !important;}
+.no-margin-left{margin-left:0 !important;}
+.no-margin-right{margin-right:0!important;}
+.no-margin-bottom{margin-bottom:0!important;}
+a{opacity:1; outline:none;}
+a:hover, a:focus {opacity:1; outline:none;}
+input{outline:none; opacity:1; border-radius:0;}
+button{border-radius:0; outline: none; -webkit-transition: all 0.7s ease; -moz-transition: all 0.7s ease; -ms-transition: all 0.7s ease; -moz-transition: all 0.7s ease;}
+body{width:100%; height:auto; background:#fff; font-family:'latomedium'; font-weight:normal;}
+textarea{outline:none;}
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6{}
+p{color:#000;}
+h2, h3{text-transform:uppercase;}
+h2{font-family:'latobold'; text-align:center; color: #00283a; font-size:30px; margin:0 0 35px 0; }
+h3{font-family:'latomedium'; font-weight:normal;}
+
+/****** Fonts ******/
+
+/****** Lato ******/
+
+@font-face {
+    font-family:'latoblack';
+    src: url('../fonts/lato-black-webfont.woff2') format('woff2'),
+         url('../fonts/lato-black-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latoblack_italic';
+    src: url('../fonts/lato-blackitalic-webfont.woff2') format('woff2'),
+         url('../fonts/lato-blackitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latobold';
+    src: url('../fonts/lato-bold-webfont.woff2') format('woff2'),
+         url('../fonts/lato-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latobold_italic';
+    src: url('../fonts/lato-bolditalic-webfont.woff2') format('woff2'),
+         url('../fonts/lato-bolditalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latohairline';
+    src: url('../fonts/lato-hairline-webfont.woff2') format('woff2'),
+         url('../fonts/lato-hairline-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latohairline_italic';
+    src: url('../fonts/lato-hairlineitalic-webfont.woff2') format('woff2'),
+         url('../fonts/lato-hairlineitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latoheavy';
+    src: url('../fonts/lato-heavy-webfont.woff2') format('woff2'),
+         url('../fonts/lato-heavy-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latoheavy_italic';
+    src: url('../fonts/lato-heavyitalic-webfont.woff2') format('woff2'),
+         url('../fonts/lato-heavyitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latoitalic';
+    src: url('../fonts/lato-italic-webfont.woff2') format('woff2'),
+         url('../fonts/lato-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latolight';
+    src: url('../fonts/lato-light-webfont.woff2') format('woff2'),
+         url('../fonts/lato-light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latolight_italic';
+    src: url('../fonts/lato-lightitalic-webfont.woff2') format('woff2'),
+         url('../fonts/lato-lightitalic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latomedium';
+    src: url('../fonts/lato-medium-webfont.woff2') format('woff2'),
+         url('../fonts/lato-medium-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family:'latoregular';
+    src: url('../lato-regular-webfont.woff2') format('woff2'),
+         url('../lato-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+.custom-container{float:none; margin:0 auto; display:table; width:100%; position:relative;margin-top: 125px}
+
+
+/****** Header ******/
+
+
+header{}
+/* .top-header{display:block; width:100%; position:relative; clear:both; color:#fff; text-align:center; padding:10px 15px; background-color:#000; font-size:15px;
+-webkit-transition: all 0.7s ease; -moz-transition: all 0.7s ease; -ms-transition: all 0.7s ease; -moz-transition: all 0.7s ease; visibility:visible; opacity:1; top:0;}
+.nav-up{visibility:hidden; opacity:0; top:-42px;}
+.top-header p{display:inline-block;}
+.top-header a{display:inline-block; text-decoration:underline; color:#fff; margin-left:5px;} */
+
+.banner{display:block; width:100%; position:relative; margin:0 0 40px 0;}
+.banner img{display:block; width:100%; position:relative;}
+.banner-in{position:absolute; left:50%; top:50%; width:50%; transform:translate(-50%, -50%); -webkit-transform:translate(-50%, -50%); -moz-transform:translate(-50%, -50%);
+ -ms-transform:translateY(-50%, -50%); background:rgba(255, 255, 255, 0.75); text-align:center; padding:11px; }
+ .banner-in-in{display:block; width:100%; border:2px dotted #aaa; opacity:1; padding:20px 10px;}
+.banner-in h3{color:#00283a; font-family:'latobold'; line-height:normal; font-weight:normal; font-size:36px; display:inline-block; margin:0 0;}
+.banner-in h1{font-size:45px; line-height:normal; font-family:'latoblack'; margin:0 0 5px 0; color:#ff2533;}
+.banner-in p{ font-size:16px; line-height:normal; font-family:'latobold'; display:inline-block; margin:0 0 10px 0; }
+.banner-circle{float:right; border-radius:50%; text-align:center; padding:11px; background:rgba(255, 255, 255, 0.65); right:55px; top:50px; position:absolute; width:150px; height:150px; }
+.banner-circle-in{position:absolute; left:50%; top:50%; width:calc(100% - 19px); height:calc(100% - 19px); border-radius:50%; border:2px dotted #aaa; transform:translate(-50%, -50%);
+ -webkit-transform:translate(-50%, -50%); -moz-transform:translate(-50%, -50%); padding-top:25px;}
+.banner-circle h4{text-transform:uppercase; color:#ff2533; font-size:33px; margin:0 0;}
+.banner-circle h5{text-transform:uppercase; color:#00283a; font-size:23px; margin:0 0 10px 0; }
+.all-products{display:block; width:100%; position:relative; margin:0 0 40px 0;}
+.all-products a{-webkit-transition: all 0.8s ease; -moz-transition: all 0.8s ease; -ms-transition: all 0.8s ease; -moz-transition: all 0.8s ease;}
+ h2.color{text-transform:uppercase; font-size:36px; color:#00283a; text-align:center; margin:0 0 48px 0;}
+  .all-products .grid{}
+ .all-products .grid__item{ vertical-align:top; }
+ .all-products .grid__item:nth-child(5n+1){clear:both;}
+ h2.color span{color:#ff131f; }
+.products{display:block; width:100%; position:relative; margin:0 0 20px 0; text-align:center;}
+.product-image{display:block; margin:0 0 25px 0;}
+.products .product-image a{display:block;min-height: 260px} 
+.product-image a img{display:block; width:100%;}
+.product-description h5{font-size:18px; line-height:27px; font-family:'latomedium'; font-weight:normal; color:#000; margin:0 0 9px 0; text-transform:uppercase; display:inline-block;
+min-height:60px;  width:100%;}
+.product-description h6{font-size:18px;  font-family:'latolight'; color:#00283a; margin:0 0 18px 0; display:inline-block; width:100%;}
+.product-description h6 span{display:inline-block; color:#ff131f; text-transform:uppercase; margin-left:5px;}
+.product-description a{ font-family:'latolight'; font-size:16px; text-transform:uppercase; color:#fff; background:#00283a; padding:15px 28px 14px 28px; display:inline-block;}
+.product-description a:hover, .shop-all:hover{background:#ff131f;}
+
+.shopby-room, .shopby-style{display:block; width:100%; position:relative; margin:0 0 15px 0;}
+.shopby-room .grid, .shopby-style .grid{margin-left:-25px;}
+.shopby-room .grid__item, .shopby-style .grid__item{padding-left:25px; margin:0 0 25px 0;}
+.shopby-style{margin-bottom:0;}
+.shopby-room h5, .shopby-style h5{min-height:inherit;}
+.shop-all{float:none; margin:0 auto 25px auto; display:table; text-transform:uppercase; color:#fff; min-width:235px; min-height:59px; padding:18px 22px; clear:both; background:#00283a;
+text-align:center; font-size:18px;}
+
+.cust{display:table; float:none; width:85%; position:relative; margin:0 auto 65px auto; clear:both;}
+.cust .left{ display:inline-block; vertical-align:middle; display:table-cell; width:62%; padding:0 45px;}
+.cust h3{text-transform:none; font-size:33px; line-height:51px; margin:0 0;}
+.cust h3 strong{color: #00283a;}
+.cust h3 span{text-transform:uppercase;}
+.cust .right{display:inline-block; vertical-align:middle; display:table-cell;  width:38%; padding:0 45px;}
+.cust .right img{display:block; width:100%; margin:0 0 15px 0;}
+.cust .right .name{display:block; width:100%;}
+.cust .right .name h3{}
+.cust .right .name p{}
+.blogs{display:block; width:100%; position:relative; margin:0 0 35px 0;}
+.blogs .grid{margin-left:-20px;}
+.blogs .grid__item{padding-left:20px; margin:0 0 20px 0;}
+.blogs .grid__item:nth-child(4n+1){clear:both;}
+.blog-image{display:table; width:100%; margin:0 0 15px 0; vertical-align:middle; min-height:265px;}
+.blog-image a{display:inline-block; width:100%; vertical-align:middle; display:table-cell;}
+.blog-image a img{display:table; margin:auto; }
+.blog-description{text-transform:none;}
+.blog-description h4{color:#428bca; text-transform:none; font-size:24px; font-weight:normal; margin:0 0 10px 0;}
+.blog-description{text-align:left;}
+.blog-description span{font-size:15px;}
+.blog-description span a{display:inline-block; margin:0 0 0 4px; color:#428bca;}
+.product-image img{max-height: 260px;}
+.mdr_brd_l{
+  background: #0a2c3c;
+  height: 2px;
+  width: 100%;
+  position: absolute;
+  top: 19px;
+}
+.title_cont{
+ margin: 0 0 48px 0; 
+}
+.title_cont h2{
+    text-transform: uppercase;
+    font-size: 36px;
+    color: #00283a;
+    text-align: center;
+    background: #fff;
+    padding-left: 18px;
+    padding-right: 18px;
+    display: table;
+    margin: 0px auto;
+    position: relative
+}
+
+.products .product-image img {
+    min-height: 260px;
+    max-height: 260px;
+}

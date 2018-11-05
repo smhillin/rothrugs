@@ -1,0 +1,333 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Rothrugs</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript">
+function showmenurag(a){	
+	$(document.getElementById('faq-title'+a)).ready(function () {
+		if ($("#faq-content"+a).is(":hidden")) 
+		{
+			$(".symp_tab_hvr").slideUp("slow");
+			$("#faq-content"+a).slideDown("slow");
+		}
+		else 
+		{
+			//$("#faq-content"+a).slideUp("slow");
+		}
+	});
+}
+</script>
+<script>
+function showsear() {
+	$('.search').toggle();
+}
+function check_small_search_form() {
+	var para = document.getElementById('search-all').value;
+	window.location="http://rothrugs.com/index.php?route=product/search&search="+para;
+	return false;
+}
+</script>
+</head>
+<body>
+<div id="menu_popup">
+  <h2>MENU <span style="cursor:pointer;margin-left:30px;"><img id="menuimgs" src="images/cross.png" /></span></h2>
+  <div class="clearfix"></div>
+  <div id="responsive-menu">
+    <div class="menu-header-container">
+      <ul>
+          <li><a href="http://rothrugs.com/membership">Membership</a></li>
+          <li><a href="http://rothrugs.wordpress.com/" target="_blank">Blog</a></li>
+          <li><a href="http://rothrugs.com/about_us">About Us</a></li>
+          <li><a href="http://rothrugs.com/katespick">Kate's Picks</a></li>
+          <li><a href="http://rothrugs.com/index.php?route=quiz">Rug Quiz</a></li>
+          <li><a href="http://rothrugs.com/index.php?route=product/search">Rug Finder</a></li>
+          <li><a href="http://rothrugs.com/contact">Contact Us</a></li>
+          <li><a href="http://rothrugs.com/faq">FAQs</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="page-content">
+<div class="container-fluid">
+<header>
+  <div class="container">
+    <div class="header1">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+          <div class="logo_div">
+            <a href="http://rothrugs.com/"> 
+            <img src="images/logo.png" alt="" title=""/> 
+            </a>
+          </div>
+          <div class="white_header">
+            <div class="top_menus">
+                <a style="cursor:pointer"><img id="menuimg" src="images/menu.png" /></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+        	<div class="sign_in"><a href="http://rothrugs.com/index.php?route=account/login">Sign In</a></div>
+            <div class="clearfix"></div>
+            <div class="menu_crt">
+                <div class="top_menu">
+                    <ul>
+                      <li><a href="http://rothrugs.com/membership">Membership</a></li>
+                      <li><a href="http://rothrugs.wordpress.com/" target="_blank">Blog</a></li>
+                      <li><a href="http://rothrugs.com/about_us">About Us</a></li>
+                      <li class="menu_red"><a href="http://rothrugs.com/katespick">Kate's Picks</a></li>
+                      <li class="menu_red"><a href="http://rothrugs.com/index.php?route=quiz">Rug Quiz</a></li>
+                      <li class="menu_red"><a href="http://rothrugs.com/index.php?route=product/search">Rug Finder</a></li>
+                  </ul>
+                </div>
+                <div class="tp_cart">
+                <a href="http://rothrugs.com/index.php?route=checkout/cart">
+                	<i class="fa fa-cart-plus" aria-hidden="true"></i>
+                </a>
+                </div>
+                <div class="tp_search">
+                <a onClick="showsear()">
+               		<i class="fa fa-search" aria-hidden="true"></i>
+                </a>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="search">
+                    <div style="display: block;" id="search">
+                    	<form method="get" onSubmit="return check_small_search_form()">
+                        <input name="search" id="search-all" value="" class="form-control" placeholder="What are you looking for?" type="text">
+                        <input value="" class="inp_srch" type="submit">
+                        </form>
+                    </div>                    
+                </div>
+
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!--MAIN PART-->
+
+<div class="shopping_cart_main">
+	<div class="container">
+    	<div class="row">
+        	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            	<div class="shop_brdcrmp">Home > Filter name > Results > Product Name > Shopping Cart</div>
+            </div>
+        </div>
+        <div class="row shp_cart_main_in">
+        	<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+            	<div class="shopcart_left">
+                	<h2>Shopping Cart</h2>
+                    <div class="shpcart_div_mn">
+                        <div class="shpcrt_bx">
+                            <div class="shprdct_img">
+                                <img src="images/shp1.jpg" alt="" title="" />
+                            </div>
+                            <div class="shprdct_rght">
+                                <div class="shprdct_cnt">
+                                    <div class="shpcnt_tp">
+                                        Product: <span class="spn_shp_prdct">Roth Rug Pad Standard Grip with rubber insulation</span><br>
+                                        Model: <span>Rug Pad Rug Pad</span><br>
+                                        Size: <span>4x6</span><br>
+                                        Unit Price: <span>$100.00</span>
+                                    </div>
+                                    <div class="shqnty_unt">
+                                        <div class="shqnty">
+                                            <div class="shqntxtx">Qty:</div>
+                                            <div class="qnty_dvx">
+                                                <input type="text" class="shqnt1">
+                                                <a href="#"><img src="images/qnty.jpg" /></a>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                        <div class="unt_ttl_tx">Unit X 3 Total: $300.00</div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="shpcrt_bx">
+                            <div class="shprdct_img">
+                                <img src="images/shp1.jpg" alt="" title="" />
+                            </div>
+                            <div class="shprdct_rght">
+                                <div class="shprdct_cnt">
+                                    <div class="shpcnt_tp">
+                                        Product: <span class="spn_shp_prdct">Roth Rug Pad Standard Grip with rubber insulation</span><br>
+                                        Model: <span>Rug Pad Rug Pad</span><br>
+                                        Size: <span>4x6</span><br>
+                                        Unit Price: <span>$100.00</span>
+                                    </div>
+                                    <div class="shqnty_unt">
+                                        <div class="shqnty">
+                                            <div class="shqntxtx">Qty:</div>
+                                            <div class="qnty_dvx">
+                                                <input type="text" class="shqnt1">
+                                                <a href="#"><img src="images/qnty.jpg" /></a>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="unt_ttl_tx">Unit X 3 Total: $300.00</div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="shpcrt_bx">
+                            <div class="shprdct_img">
+                                <img src="images/shp1.jpg" alt="" title="" />
+                            </div>
+                            <div class="shprdct_rght">
+                                <div class="shprdct_cnt">
+                                    <div class="shpcnt_tp">
+                                        Product: <span class="spn_shp_prdct">Roth Rug Pad Standard Grip with rubber insulation</span><br>
+                                        Model: <span>Rug Pad Rug Pad</span><br>
+                                        Size: <span>4x6</span><br>
+                                        Unit Price: <span>$100.00</span>
+                                    </div>
+                                    <div class="shqnty_unt">
+                                        <div class="shqnty">
+                                            <div class="shqntxtx">Qty:</div>
+                                            <div class="qnty_dvx">
+                                                <input type="text" class="shqnt1">
+                                                <a href="#"><img src="images/qnty.jpg" /></a>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="unt_ttl_tx">Unit X 3 Total: $300.00</div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            	<div class="shopcart_right">
+                	<div class="coupan_code_main">
+                        <div class="gift_coupan">
+                            <div class="use_voucher" id="faq-title1" onclick="showmenurag(1)">
+                                <div class="use_xtt">Use Gift Voucher </div>
+                                <div class="use_arrow"><a href="#"><img src="images/shp_ar1.png" id="plusminus1" /></a></div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="enter_code symp_tab_hvr" id="faq-content1" style="display:none;">
+                                <input type="text" class="cpn1" placeholder="Please Enter">
+                            </div>
+                        </div>
+                        <div class="gift_coupan" id="faq-title2" onclick="showmenurag(2)">
+                            <div class="use_voucher">
+                                <div class="use_xtt">Enter Coupon Code </div>
+                                <div class="use_arrow"><a href="#"><img src="images/shp_ar1.png" id="plusminus2" /></a></div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="enter_code symp_tab_hvr" id="faq-content2" style="display:none;">
+                                <input type="text" class="cpn1" placeholder="Please Enter">
+                            </div>
+                        </div>
+                        <div class="gift_coupan" id="faq-title3" onclick="showmenurag(3)">
+                            <div class="use_voucher">
+                                <div class="use_xtt">Estimate Shipping & Taxes </div>
+                                <div class="use_arrow"><a href="#"><img src="images/shp_ar1.png" id="plusminus3" /></a></div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="enter_code symp_tab_hvr" id="faq-content3" style="display:none;">
+                                <input type="text" class="cpn1" placeholder="Please Enter">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="subtotal_dv">Subtotal<span>$900.00</span><div class="clearfix"></div></div>
+                    <div class="total_dvtx">TOTAL:<span>$900.00</span><div class="clearfix"></div></div>
+                    <input type="button" value="CHECKOUT" class="chkout">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--END MAIN PART-->
+
+<div id="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2 col-xs-12 col-sm-2 firstclass">
+        <ul>
+          <li><a href="http://rothrugs.com/index.php?route=information/sitemap">Sitemap</a></li>
+          <li><a href="http://rothrugs.com/membership">Membership</a></li>
+          <li><a href="http://rothrugs.wordpress.com/" target="_blank">Blog</a></li>
+          <li><a href="http://rothrugs.com/about_us">About Us</a></li>
+          <li><a href="http://rothrugs.com/katespick">Kate's Picks</a></li>
+          <li><a href="http://rothrugs.com/index.php?route=quiz">Rug Quiz</a></li>
+          <li><a href="http://rothrugs.com/index.php?route=product/search">Rug Finder</a></li>
+          <li><a href="http://rothrugs.com/contact">Contact Us</a></li>
+          <li><a href="http://rothrugs.com/faq">FAQs</a></li>
+        </ul>
+      </div>
+      <div class="col-md-8 col-xs-12 col-sm-7 social text-center">
+        <div class="row">
+          <div class="col-md-12">
+            <p>Connect With Us</p>
+            <a href="http://www.pinterest.com/rothrugs/" target="_blank"><img src="images/pin.png"></a> <a href="https://twitter.com/rothrugs" target="_blank"><img src="images/tw.png"></a> <a href="https://www.facebook.com/RothRugs?ref=hl" target="_blank"><img src="images/fb.png"></a> <a href="http://instagram.com/rothrugs" target="_blank"><img src="images/inst.png"></a> </div>
+          <div class="col-md-12 quickMenu_footer">
+            <div class="row">
+              <div class="col-xs-4"> <a href="http://rothrugs.com/faq?to=shipping">
+                <div class="quick_item"> <img class="icon-image" src="images/icon.png" alt=""> <br>
+                  <span class="quick_text"> Free shipping </span> </div>
+                </a> </div>
+              <div class="col-xs-4"> <a href="http://rothrugs.com/faq?to=gprice">
+                <div class="quick_item"> <img class="icon-image" src="images/icon2.png" alt=""> <br>
+                  <span class="quick_text"> Price Match Guarantee </span> </div>
+                </a> </div>
+              <div class="col-xs-4"> <a href="http://rothrugs.com/faq?to=tax">
+                <div class="quick_item"> <img class="icon-image" src="images/icon1.png" alt=""> <br>
+                  <span class="quick_text"> Tax Free </span> </div>
+                </a> </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-xs-12 col-sm-2 firstclass">
+        <ul>
+          <li><a href="http://rothrugs.com/rugs/casual/">Casual Rugs</a></li>
+          <li><a href="http://rothrugs.com/rugs/modern/">Modern Rugs</a></li>
+          <li><a href="http://rothrugs.com/rugs/outdoor/">Outdoor Rugs</a></li>
+          <li><a href="http://rothrugs.com/rugs/shag/">Shag Rugs</a></li>
+          <li><a href="http://rothrugs.com/rugs/southwest/">Southwestern Rugs</a></li>
+          <li><a href="http://rothrugs.com/rugs/pads/">Rug Pads</a></li>
+          <li><a href="http://rothrugs.com/rugs/traditional/">Traditional Rugs</a></li>
+        </ul>
+        <div class="clearfix">&nbsp;</div>
+        <div class="col-md-12"> 
+            <a href="http://www.bbb.org/pittsburgh/business-reviews/carpet-and-rug-dealers-new/rothrugs-com-in-pittsburgh-pa-71012499">
+                <img src="images/bbb.png">
+            </a> 
+        </div>
+      </div>
+      <!--<div class="col-md-2 col-sm-3 hidden-xs contact text-right">
+        <div class="col-md-12"> Roth Rugs<br>
+          (888) 776 - 6425 </div>
+        <div class="col-md-12 bbb hidden-xs text-right"> <a href="http://www.bbb.org/pittsburgh/business-reviews/carpet-and-rug-dealers-new/rothrugs-com-in-pittsburgh-pa-71012499"><img src="images/bbb.png"></a> </div>
+      </div>-->
+      <div class="clearfix"></div>
+      <div class="col-md-4 hidden-xs"> &nbsp; </div>
+      <div class="col-md-4 copy text-center">
+        <p>© 2016  |  Roth Rugs</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</body></html>

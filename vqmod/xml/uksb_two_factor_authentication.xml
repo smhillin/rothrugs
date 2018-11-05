@@ -1,0 +1,332 @@
+<modification>
+    <id><![CDATA[UKSB Admin Two Factor Authenication]]></id>
+	<version><![CDATA[1.1]]></version>
+	<vqmver><![CDATA[2.5.1]]></vqmver>
+	<author><![CDATA[http://www.opencart-extensions.co.uk]]></author>
+	<file name="system/library/user.php">
+		<operation>
+			<search position="replace"><![CDATA[public function login($username, $password) {]]></search>
+			<add><![CDATA[	public function get_timestamp() {
+		return floor(microtime(true)/30);
+	}
+
+	public function base32_decode($b32) {
+
+		$lut = array("A" => 0, "B" => 1, "C" => 2, "D" => 3, "E" => 4, "F" => 5, "G" => 6, "H" => 7, "I" => 8, "J" => 9, "K" => 10, "L" => 11, "M" => 12, "N" => 13, "O" => 14, "P" => 15, "Q" => 16, "R" => 17, "S" => 18, "T" => 19, "U" => 20, "V" => 21, "W" => 22, "X" => 23, "Y" => 24, "Z" => 25, "2" => 26, "3" => 27, "4" => 28, "5" => 29, "6" => 30, "7" => 31);
+	
+		$b32 	= strtoupper($b32);
+
+		if (!preg_match('/^[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]+$/', $b32, $match))
+			throw new Exception('Invalid characters in the string.');
+
+		$l 	= strlen($b32);
+		$n	= 0;
+		$j	= 0;
+		$binary = "";
+
+		for ($i = 0; $i < $l; $i++) {
+
+			$n = $n << 5;
+			$n = $n + $lut[$b32[$i]];
+			$j = $j + 5;
+
+			if ($j >= 8) {
+				$j = $j - 8;
+				$binary .= chr(($n & (0xFF << $j)) >> $j);
+			}
+		}
+
+		return $binary;
+	}
+
+	public function oath_hotp($key, $counter)
+	{
+	    if (strlen($key) < 8)
+		throw new Exception('Secret key should be at least 16 characters');
+
+	    $bin_counter = pack('N*', 0) . pack('N*', $counter);
+	    $hash 	 = hash_hmac ('sha1', $bin_counter, $key, true);
+
+	    return str_pad($this->oath_truncate($hash), 6, '0', STR_PAD_LEFT);
+	}
+
+	public function verify_key($b32seed, $key) {
+
+		$timeStamp = $this->get_timestamp();
+
+		$binarySeed = $this->base32_decode($b32seed);
+		if ($this->oath_hotp($binarySeed, $timeStamp) == $key){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
+	public function oath_truncate($hash)
+	{
+	    $offset = ord($hash[19]) & 0xf;
+
+	    return (
+	        ((ord($hash[$offset+0]) & 0x7f) << 24 ) |
+	        ((ord($hash[$offset+1]) & 0xff) << 16 ) |
+	        ((ord($hash[$offset+2]) & 0xff) << 8 ) |
+	        (ord($hash[$offset+3]) & 0xff)
+	    ) % pow(10, 6);
+	}
+
+	public function login($username, $password, $uksb_2fa) {]]></add>
+		</operation>
+		<operation>
+			<search position="after" offset="2"><![CDATA[$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user WHERE username = '" . $this->db->escape($username) . "' AND (password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') AND status = '1'");]]></search>
+			<add><![CDATA[			if($user_query->row['uksb_2fa_secret']){
+				$secretey = $user_query->row['uksb_2fa_secret'];
+				
+				if($this->verify_key($secretey, $uksb_2fa)){
+					$this->session->data['user_id'] = $user_query->row['user_id'];
+		
+					$this->user_id = $user_query->row['user_id'];
+					$this->username = $user_query->row['username'];			
+		
+					$user_group_query = $this->db->query("SELECT permission FROM " . DB_PREFIX . "user_group WHERE user_group_id = '" . (int)$user_query->row['user_group_id'] . "'");
+		
+					$permissions = unserialize($user_group_query->row['permission']);
+		
+					if (is_array($permissions)) {
+						foreach ($permissions as $key => $value) {
+							$this->permission[$key] = $value;
+						}
+					}
+		
+					return true;
+				}else{
+					return false;
+				}			
+			}else{
+				$this->session->data['user_id'] = $user_query->row['user_id'];
+	
+				$this->user_id = $user_query->row['user_id'];
+				$this->username = $user_query->row['username'];			
+	
+				$user_group_query = $this->db->query("SELECT permission FROM " . DB_PREFIX . "user_group WHERE user_group_id = '" . (int)$user_query->row['user_group_id'] . "'");
+	
+				$permissions = unserialize($user_group_query->row['permission']);
+	
+				if (is_array($permissions)) {
+					foreach ($permissions as $key => $value) {
+						$this->permission[$key] = $value;
+					}
+				}
+	
+				return true;
+			}
+			
+]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/common/login.php">
+		<operation>
+			<search position="after"><![CDATA[$data['entry_password'] = $this->language->get('entry_password');]]></search>
+			<add><![CDATA[		$data['entry_uksb_2fa'] = $this->language->get('entry_uksb_2fa');
+		$data['help_uksb_2fa'] = $this->language->get('help_uksb_2fa');
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[		if (isset($this->request->post['username'])) {]]></search>
+			<add><![CDATA[		if (isset($this->request->post['uksb_2fa'])) {
+			$data['uksb_2fa'] = $this->request->post['uksb_2fa'];
+		} else {
+			$data['uksb_2fa'] = '';
+		}
+
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[if (!isset($this->request->post['username']) || !isset($this->request->post['password']) || !$this->user->login($this->request->post['username'], $this->request->post['password'])) {]]></search>
+			<add><![CDATA[if (!isset($this->request->post['username']) || !isset($this->request->post['password']) || !$this->user->login($this->request->post['username'], $this->request->post['password'], $this->request->post['uksb_2fa'])) {]]></add>
+		</operation>
+	</file>
+	<file name="admin/language/english/common/login.php">
+		<operation>
+			<search position="after"><![CDATA[$_['entry_password'] = 'Password';]]></search>
+			<add><![CDATA[$_['entry_uksb_2fa'] = '2 Factor Authentication Code';
+$_['help_uksb_2fa'] = 'If you have not set-up 2 Factor Authentication, leave this field blank';]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$_['error_login']    = 'No match for Username and/or Password.';]]></search>
+			<add><![CDATA[$_['error_login']    = 'No match for Username and/or Password, or 2 Factor Authentication Code is Incorrect.';]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/common/login.tpl">
+		<operation>
+			<search position="after" offset="3"><![CDATA[<?php if ($forgotten) { ?>]]></search>
+			<add><![CDATA[              <div class="form-group">
+                <label for="input-uksb_2fa"><span data-toggle="tooltip" title="<?php echo $help_uksb_2fa; ?>"><?php echo $entry_uksb_2fa; ?> <i class="fa fa-question-circle"></i></span></label>
+                <div class="input-group"><span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                  <input type="password" name="uksb_2fa" value="" placeholder="<?php echo $entry_uksb_2fa; ?>" id="input-uksb_2fa" class="form-control" />
+                </div>
+              </div>
+]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/user/user.php">
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add><![CDATA[		$query = $this->db->query("DESC `" . DB_PREFIX . "user` `uksb_2fa_status`");
+		if (!$query->num_rows) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "user` ADD `uksb_2fa_status` TINYINT ( 1 ) NOT NULL");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "user` ADD `uksb_2fa_secret` CHAR ( 16 ) NOT NULL COLLATE utf8_general_ci");
+		}
+
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {]]></search>
+			<add><![CDATA[			$this->request->post['uksb_2fa_secret'] = ($this->request->post['uksb_2fa_status'] ? $this->request->post['uksb_2fa_secret'] : '');
+			
+]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[$data['button_save'] = $this->language->get('button_save');]]></search>
+			<add><![CDATA[		$data['entry_2fa_title'] = $this->language->get('entry_2fa_title');
+		$data['entry_2fa_enable'] = $this->language->get('entry_2fa_enable');
+		$data['entry_2fa_qr'] = $this->language->get('entry_2fa_qr');
+		$data['entry_2fa_secret'] = $this->language->get('entry_2fa_secret');
+		$data['help_2fa_info'] = $this->language->get('help_2fa_info');
+		$data['help_2fa_enable'] = $this->language->get('help_2fa_enable');
+		$data['help_2fa_qr'] = $this->language->get('help_2fa_qr');
+		$data['help_2fa_secret'] = $this->language->get('help_2fa_secret');
+		$data['uksb_2fa_otpname'] = urlencode($this->config->get('config_name'));
+
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);]]></search>
+			<add><![CDATA[
+		if (isset($this->request->post['uksb_2fa_status'])) {
+			$data['uksb_2fa_status'] = $this->request->post['uksb_2fa_status'];
+		} elseif (!empty($user_info)) {
+			$data['uksb_2fa_status'] = $user_info['uksb_2fa_status'];
+		} else {
+			$data['uksb_2fa_status'] = 0;
+		}
+
+		if (isset($this->request->post['uksb_2fa_secret'])) {
+			$data['uksb_2fa_secret'] = $this->request->post['uksb_2fa_secret'];
+		} elseif (!empty($user_info)) {
+			$data['uksb_2fa_secret'] = ($user_info['uksb_2fa_secret'] && $user_info['uksb_2fa_status'] ? $user_info['uksb_2fa_secret'] : $this->getNewSecret());
+		} else {
+			$data['uksb_2fa_secret'] = $this->getNewSecret();
+		}
+
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$this->response->setOutput($this->load->view('user/user_form.tpl', $data));]]></search>
+			<add><![CDATA[	}
+
+	protected function getNewSecret() {
+		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+		$secret = '';
+		for ( $i = 0; $i < 16; $i++ ) {
+			$secret .= substr( $chars, mt_rand( 0, 31 ), 1 );
+		}
+		return $secret;
+]]></add>
+		</operation>
+	</file>
+	<file name="admin/model/user/user.php">
+		<operation>
+			<search position="replace"><![CDATA[$this->db->query("INSERT INTO `" . DB_PREFIX . "user` SET username = '" . $this->db->escape($data['username']) . "', user_group_id = '" . (int)$data['user_group_id'] . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', image = '" . $this->db->escape($data['image']) . "', status = '" . (int)$data['status'] . "', date_added = NOW()");]]></search>
+			<add><![CDATA[$this->db->query("INSERT INTO `" . DB_PREFIX . "user` SET username = '" . $this->db->escape($data['username']) . "', user_group_id = '" . (int)$data['user_group_id'] . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', image = '" . $this->db->escape($data['image']) . "', status = '" . (int)$data['status'] . "', date_added = NOW(), uksb_2fa_status = '" . (int)$data['uksb_2fa_status'] . "', uksb_2fa_secret = '" . $this->db->escape($data['uksb_2fa_secret']) . "'");]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$this->db->query("UPDATE `" . DB_PREFIX . "user` SET username = '" . $this->db->escape($data['username']) . "', user_group_id = '" . (int)$data['user_group_id'] . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', image = '" . $this->db->escape($data['image']) . "', status = '" . (int)$data['status'] . "' WHERE user_id = '" . (int)$user_id . "'");]]></search>
+			<add><![CDATA[$this->db->query("UPDATE `" . DB_PREFIX . "user` SET username = '" . $this->db->escape($data['username']) . "', user_group_id = '" . (int)$data['user_group_id'] . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', image = '" . $this->db->escape($data['image']) . "', status = '" . (int)$data['status'] . "', uksb_2fa_status = '" . (int)$data['uksb_2fa_status'] . "', uksb_2fa_secret = '" . $this->db->escape($data['uksb_2fa_secret']) . "' WHERE user_id = '" . (int)$user_id . "'");]]></add>
+		</operation>
+	</file>
+	<file name="admin/language/english/user/user.php">
+		<operation>
+			<search position="after"><![CDATA[// Entry]]></search>
+			<add><![CDATA[$_['entry_2fa_title']	= 'Two Factor Authentication';
+$_['entry_2fa_enable']	= 'Enable Two Factor Authenitcation';
+$_['entry_2fa_qr']	= 'QR Code';
+$_['entry_2fa_secret']	= 'Backup Secret Key';
+$_['help_2fa_info']	= 'To use Two Factor Authentication, you will need to download the free Google Authenticator app on your mobile device from you device\'s app store.<br /><br />The first time you use the app, you will be able to to scan the QR Code to add your login to your mobile device.<br /><br />Afterwhich, each time you go to login to your admin, use the app to get the One Time Login Code, which you enter in the login form along with your username and password as normal.';
+$_['help_2fa_enable']	= 'Enabling two factor authentication for this user will prompt the user when logging in to enter the code given to them by the Google Authenticator App.<br /><br />Disabling Two Factor Authentication will clear any previously saved Secret Key.';
+$_['help_2fa_qr']	= 'Scan the QR Code using your mobile Google Authenticator App';
+$_['help_2fa_secret']	= 'This Secret Key should be written down and kept in a safe place.<br />It can be used in the Google Authenticator App if for some reason the data on your moble device gets lost and you have to reinstall the Google Authenticator app.';
+
+]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/user/user_form.tpl">
+		<operation>
+			<search position="before"><![CDATA[</form>]]></search>
+			<add><![CDATA[          <div class="form-group">
+            <div class="col-sm-12"><h2><?php echo $entry_2fa_title; ?></h2>
+        		<p><?php echo $help_2fa_info; ?></p>
+            </div>
+          </div>
+        <?php if(!$uksb_2fa_status) { ?>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-2fa_enable"><span data-toggle="tooltip" title="<?php echo $help_2fa_enable; ?>"><?php echo $entry_2fa_enable; ?></span></label>
+            <div class="col-sm-10">
+              <select name="uksb_2fa_status" id="input-2fa_enable" class="form-control">
+                <?php if ($uksb_2fa_status) { ?>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <?php } else { ?>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="uksb-2fa_qr"><span data-toggle="tooltip" title="<?php echo $help_2fa_qr; ?>"><?php echo $entry_2fa_qr; ?></span></label>
+            <div class="col-sm-10">
+              <div id="uksb_2fa_qr"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-2fa_secret"><span data-toggle="tooltip" title="<?php echo $help_2fa_secret; ?>"><?php echo $entry_2fa_secret; ?></span></label>
+            <div class="col-sm-10">
+              <input type="hidden" id="input-2fa_secret" name="uksb_2fa_secret" value="<?php echo $uksb_2fa_secret; ?>" />
+              <strong><?php echo $uksb_2fa_secret; ?></strong>
+            </div>
+          </div>
+        <?php } else { ?>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-2fa_enable"><span data-toggle="tooltip" title="<?php echo $help_2fa_enable; ?>"><?php echo $entry_2fa_enable; ?></span></label>
+            <div class="col-sm-10">
+              <select name="uksb_2fa_status" id="input-2fa_enable" class="form-control">
+                <?php if ($uksb_2fa_status) { ?>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <?php } else { ?>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <?php } ?>
+              </select><input type="hidden" name="uksb_2fa_secret" value="">
+            </div>
+          </div>
+        <?php } ?>
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[<?php echo $footer; ?> ]]></search>
+			<add><![CDATA[<script type="text/javascript" src="view/javascript/jquery/jquery.qrcode-0.11.0.min.js"></script>
+<script type="text/javascript">
+<!--
+var qrc="otpauth://totp/<?php echo $uksb_2fa_otpname; ?>:Admin?secret=<?php echo $uksb_2fa_secret; ?>&issuer=<?php echo $uksb_2fa_otpname; ?>";
+$("#uksb_2fa_qr").qrcode({
+    "width": 200,
+    "height": 200,
+    "text": qrc
+});
+//-->
+</script>]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,15 @@
+---------- Date: 2017-09-02 13:30:38 ~ IP : 49.34.78.227 ----------
+REQUEST URI : /admin/index.php?route=catalog/product&token=42e3d55c5f57bd0aa9e4b5f5714c674d
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/vqmod_po_mgmt.xml
+   id        : Purchase Order Management Extension
+   version   : 3.0
+   vqmver    : 1.0.0
+   author    : Ramesh Krishnamoorthy
+
+File Name    : admin/view/template/catalog/product_list.tpl(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <td class="text-right"><?php if ($sort == 'p.price') { ?>
+
+----------------------------------------------------------------------
+
+

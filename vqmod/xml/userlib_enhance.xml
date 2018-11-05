@@ -1,0 +1,111 @@
+<modification>
+	<id>Supporting file - Used by extensions to enhance user system library</id>
+	<version>1.0.0</version>
+	<vqmver>2.1.5</vqmver>
+	<author>Cart Ideas - Mail : contact@hereforsupport.com</author>
+
+	<file name="system/library/user.php">
+		<operation>
+			<search position="after"><![CDATA[
+			private $user_id;
+			]]></search>
+			<add><![CDATA[
+			private $group_name;
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$this->user_id = $user_query->row['user_id'];
+			]]></search>
+			<add><![CDATA[
+			$this->group_name = $user_query->row['user_group_name'];
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user WHERE user_id = '" . (int)$this->session->data['user_id'] . "' AND status = '1'");
+			]]></search>
+			<add><![CDATA[
+			$user_query = $this->db->query("SELECT u.*,ug.name as user_group_name FROM " . DB_PREFIX . "user u INNER JOIN " . DB_PREFIX . "user_group ug ON u.user_group_id = ug.user_group_id WHERE u.user_id = '" . (int)$this->session->data['user_id'] . "' AND status = '1'");
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user 
+			]]></search>
+			<add><![CDATA[
+			$user_query = $this->db->query("SELECT u.*,ug.name as user_group_name FROM " . DB_PREFIX . "user u INNER JOIN " . DB_PREFIX . "user_group ug ON u.user_group_id = ug.user_group_id 
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before"><![CDATA[
+			public function getId() {
+			]]></search>
+			<add><![CDATA[
+			public function getGroupName() {
+				return $this->group_name;
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			public function login($username, $password) {
+			]]>
+			</search>
+			<add><![CDATA[		
+			  	public function forceLogin($username) {
+					$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user WHERE username = '" . $this->db->escape($username) . "' AND status = '1'");
+
+					if ($user_query->num_rows) {
+						$this->session->data['user_id'] = $user_query->row['user_id'];
+						
+						$this->user_id = $user_query->row['user_id'];
+						$this->username = $user_query->row['username'];			
+
+						$user_group_query = $this->db->query("SELECT permission FROM " . DB_PREFIX . "user_group WHERE user_group_id = '" . (int)$user_query->row['user_group_id'] . "'");
+
+						$permissions = unserialize($user_group_query->row['permission']);
+
+						if (is_array($permissions)) {
+							foreach ($permissions as $key => $value) {
+								$this->permission[$key] = $value;
+							}
+						}
+					
+						return true;
+					} else {
+						return false;
+					}
+				}
+			]]></add>
+		</operation>		
+	</file>
+	<file name="system/library/customer.php">
+		<operation>
+			<search position="after"><![CDATA[
+			private $customer_group_id;
+			]]></search>
+			<add><![CDATA[
+			private $agent_id;
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$this->customer_group_id = $customer_query->row['customer_group_id'];
+			]]></search>
+			<add><![CDATA[
+			$this->agent_id = $customer_query->row['agent_id'];
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			public function getGroupId() {
+			]]></search>
+			<add><![CDATA[
+			public function getAgentId() {
+				return $this->agent_id;	
+			}
+			]]></add>
+		</operation>
+	</file>
+</modification>	

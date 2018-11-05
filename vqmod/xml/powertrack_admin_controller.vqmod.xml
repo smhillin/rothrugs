@@ -1,0 +1,130 @@
+<modification>
+    
+    <id><![CDATA[powertrack-oc22]]></id>
+    <version><![CDATA[5.0.1]]></version>
+    <author><![CDATA[support@prowebtec.com − https://www.prowebtec.com]]></author>
+    <vqmver><![CDATA[2.6.2]]></vqmver>
+    
+    
+    
+    
+    
+<!-- =====
+order list
+====== -->
+
+    <file name="admin/controller/sale/order.php">
+        
+        <operation>
+            <search position="after"><![CDATA[protected function getList() {]]></search>
+            <add><![CDATA[
+                //translation
+                $this->load->language('module/powertrack_pub');
+                $data['powertrack_text_tracking_code'] = $this->language->get('powertrack_text_tracking_code');
+                
+                $data['powertrack_cfg_show_tracking_column_in_order_list'] = $this->config->get('powertrack_cfg_show_tracking_column_in_order_list');
+            ]]></add>
+        </operation>
+        
+        
+    <!-- ===========================================================================================================
+            Order list view: Inject tracking info. Each order can have multiple tracking info displayed line by line
+
+            Search position is important to let powertrack admin code search to work.
+    ============================================================================================================ -->
+
+        <operation>
+            <search position="before"><![CDATA[$data['text_list'] = $this->language->get('text_list');]]></search>
+            <add><![CDATA[
+            $this->load->model('extension/module/powertrack');
+            foreach($data['orders'] as $key => $odr){
+                $trackcodes = $this->model_extension_module_powertrack->get_tracking_info_as_anchor_tags($odr);
+                $data['orders'][$key]['powertrack_trackcode'] = implode(" <br /> ", $trackcodes);
+
+                //hook replace tracking data
+                //hook_3ba1d #mikrofiber
+            }
+            ]]></add>
+        </operation>
+        
+
+<!-- =====================
+    Order history view
+====================== -->
+
+        <!-- ===========
+            Language
+            for history top view (no form), ajax fetch
+        ============ -->
+        <operation>
+            <search position="before"><![CDATA[$data['column_comment'] = $this->language->get('column_comment');]]></search>
+            <add><![CDATA[
+        $this->load->language('module/powertrack_pub');
+        $data['powertrack_text_tracking_code'] = $this->language->get('powertrack_text_tracking_code');
+            ]]>
+            </add>
+        </operation>
+
+
+        <!-- ============================================
+            For each history, get tracking info, then ...
+        ============================================= -->
+        <operation>
+            <search position="before"><![CDATA[$data['histories'][] = array(]]></search>
+
+             <!-- TODO move me to a file -->
+            <add><![CDATA[
+                $powertrack_tracking_url = '';
+                $powertrack_carrier_name = '';
+
+                if (isset ($result['powertrack_carrier'])) {
+                
+                    $this->load->model('sale/order');
+                    $order = $this->model_sale_order->getOrder($this->request->get['order_id']);   
+                    
+                    $args = array(
+                        'trackingCode'      => $result['powertrack_trackcode'], 
+                        'carrierCode'       => $result['powertrack_carrier']   ,
+                        'shipping_postcode' => $order['shipping_postcode'],
+                        'payment_postcode'  => $order['payment_postcode'],
+                    );
+                    
+                    $this->load->helper('powertrack');
+                    $comapny_url_and_name = get_tracking_url_and_carrier_name($args, $this->config);
+                    
+                    $powertrack_tracking_url = $comapny_url_and_name['tracking_url'];
+                    $powertrack_carrier_name = $comapny_url_and_name['carrier_name'];
+
+                }
+            ]]>
+            </add>
+        </operation>
+<!-- ========================
+        ... then inject them.
+========================= -->
+
+        <operation>
+            <search position="after"><![CDATA['status'     => $result['status'],]]></search>
+            <add><![CDATA[
+                'powertrack_carrier'     => $powertrack_carrier_name        ,
+                'powertrack_tracknumber' => $result['powertrack_trackcode'] ,
+                'powertrack_tracking_url'=> $powertrack_tracking_url,
+
+            ]]></add>
+        </operation>
+
+        <!-- ======================================================================
+            Order history view: Inject company list as well as some translation in history form (#info)
+        ======================================================================= -->
+        <operation>
+            <search position="after"><![CDATA[$data['entry_notify'] = $this->language->get('entry_notify');]]></search>
+            <add><![CDATA[
+                $data['powertrack_html_fields']                 = $this->load->controller('extension/powertrack_sale/build_html_fields');
+                $data['powertrack_params_for_add_history_ajax'] = $this->load->controller('extension/powertrack_sale/build_request_params_for_add_history_ajax');
+            ]]>
+            </add>
+        </operation>
+        
+    </file>
+    
+</modification>

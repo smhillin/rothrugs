@@ -1,0 +1,2746 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<id>Purchase Order Management Extension</id>
+	<version>3.0</version>
+	<vqmver>1.0.0</vqmver>
+	<author>Ramesh Krishnamoorthy</author>
+	<file name="admin/controller/common/menu.php">
+		<operation>
+			<search position="after"><![CDATA[$data['text_backup'] = $this->language->get('text_backup');]]></search>
+			<add><![CDATA[		
+			$data['text_supplier'] = $this->language->get('text_supplier');
+			$data['text_po'] = $this->language->get('text_po');
+			$data['text_pomgmt'] = $this->language->get('text_pomgmt');
+			$data['text_recalculate'] = $this->language->get('text_recalculate');
+			$data['text_suppreporting'] = $this->language->get('text_suppreporting');
+			$data['text_batchgenerate'] = $this->language->get('text_batchgenerate');
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$data['backup'] = $this->url->link('tool/backup', 'token=' . $this->session->data['token'], 'SSL');]]></search>
+			<add><![CDATA[			
+				$data['supplier'] = $this->url->link('pomgmt/supplier', 'token=' . $this->session->data['token'], 'SSL');
+				$data['po'] = $this->url->link('pomgmt/po', 'token=' . $this->session->data['token'], 'SSL');
+				$data['recalculate'] = $this->url->link('pomgmt/po/recalc', 'token=' . $this->session->data['token'], 'SSL');
+				$data['suppreporting'] = $this->url->link('pomgmt/suppreporting', 'token=' . $this->session->data['token'], 'SSL');
+				$data['batchgenerate'] = $this->url->link('pomgmt/po_batch_rules', 'token=' . $this->session->data['token'], 'SSL');
+				$this->load->model('pomgmt/supplier');
+				$data['isSupplier'] = $this->model_pomgmt_supplier->isUserSupplier();
+			]]>
+			</add>
+		</operation>
+	</file>
+	<file name="admin/language/*/common/menu.php">
+		<operation>
+			<search position="before"><![CDATA[
+			$_['text_backup']
+			]]></search>
+			<add><![CDATA[
+			$_['text_supplier']     = 'Suppliers';
+			$_['text_po']           = 'Purchase Orders';
+			$_['text_recalculate']           = 'Recalculate Prices';
+			$_['text_pomgmt']           = 'PO Management';
+			$_['text_suppreporting']           = 'PO Reporting';
+			$_['text_batchgenerate']           = 'PO Batch Generate';
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/common/menu.tpl">
+		<operation>
+			<search position="after"><![CDATA[
+			<li><a href="<?php echo $order; ?>"><?php echo $text_order; ?></a></li>
+			]]></search>
+			<add><![CDATA[        
+          <li><a class="parent"><?php echo $text_pomgmt; ?></a>
+            <ul>
+              <li><a href="<?php echo $supplier; ?>"><?php echo $text_supplier; ?></a></li>
+              <li><a href="<?php echo $po; ?>"><?php echo $text_po; ?></a></li>
+			  <li><a href="<?php echo $batchgenerate; ?>"><?php echo $text_batchgenerate; ?></a></li>
+			  <li><a href="<?php echo $recalculate; ?>"><?php echo $text_recalculate; ?></a></li>
+            </ul>
+          </li>		  
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" index="2"><![CDATA[
+			<li><a class="parent"><?php echo $text_customer; ?></a>
+			]]></search>
+			<add><![CDATA[        
+			  <li><a class="parent"><?php echo $text_pomgmt; ?></a>
+				<ul>
+				  <li><a href="<?php echo $suppreporting; ?>"><?php echo $text_suppreporting; ?></a></li>
+				</ul>
+			  </li>		  
+			]]></add>
+		</operation>		
+		
+	</file>
+	<file name="admin/controller/common/header.php">
+	<operation>
+			<search position="after"><![CDATA[$data['review'] = $this->url->link('catalog/review', 'token=' . $this->session->data['token'] . '&filter_status=0', 'SSL');]]></search>
+			<add><![CDATA[			
+			
+				$this->load->model('pomgmt/supplier');
+				$data['isSupplier'] = $this->model_pomgmt_supplier->isUserSupplier();
+			]]>
+			</add>
+		</operation>
+	</file>
+	<file name="admin/view/template/common/header.tpl">
+		<operation>
+			<search position="replace"><![CDATA[
+			<?php foreach ($stores as $store) { ?>
+			]]></search>
+			<add><![CDATA[        
+			<?php if (!$isSupplier) foreach ($stores as $store) { ?>  			
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/catalog/product_form.tpl">
+		<operation>
+			<search position="replace" index="1">
+			<![CDATA[
+			<td colspan="6"></td>
+			]]>
+			</search>
+			<add><![CDATA[		
+			<td colspan="8"></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace" index="1">
+			<![CDATA[
+			html += '        <td colspan="6"></td>';
+			]]>
+			</search>
+			<add><![CDATA[		
+			html += '        <td colspan="8"></td>';
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="after" index="1">
+			<![CDATA[
+			 <td class="text-right"><?php echo $entry_price; ?></td>
+			]]>
+			</search>
+			<add><![CDATA[		
+			<td class="text-right"><?php echo $entry_productcost; ?></td>
+			<td class="text-right"><?php echo $column_finalcost; ?></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after" index="1">
+			<![CDATA[
+			html += '        <td class="text-right"><?php echo $entry_price; ?></td>';
+			]]>
+			</search>
+			<add><![CDATA[		
+			html += '        <td class="text-right"><?php echo $entry_productcost; ?></td>';	
+			html += '        <td class="text-right"><?php echo $column_finalcost; ?></td>';
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="after">
+			<![CDATA[<input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][price]" value="<?php echo $product_option_value['price']; ?>" placeholder="<?php echo $entry_price; ?>" class="form-control" /></]]>
+
+
+
+			</search>
+			<add><![CDATA[		
+
+                  <td class="text-right"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][cost_prefix]" onchange='updateoptionfinalcost(document.getElementsByName("product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][cost]")[0],this,"product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][finalcost]");' class="form-control">>
+                      <?php if ($product_option_value['cost_prefix'] == '+') { ?>
+                      <option value="+" selected="selected">+</option>
+                      <?php } else { ?>
+                      <option value="+">+</option>
+                      <?php } ?>
+                      <?php if ($product_option_value['cost_prefix'] == '-') { ?>
+                      <option value="-" selected="selected">-</option>
+                      <?php } else { ?>
+                      <option value="-">-</option>
+                      <?php } ?>
+                    </select>
+					<input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][cost]" value="<?php echo $product_option_value['cost']; ?>" size="5" onchange='updateoptionfinalcost(this,document.getElementsByName("product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][cost_prefix]")[0],"product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][finalcost]");' class="form-control" /></td>
+				<td class="text-right"><input type="text"  disabled="disabled"  name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][finalcost]" value="<?php echo $product_option_value['ExchangeValue']; ?>" size="8" class="form-control"/></td>
+
+			]]></add>
+		</operation>			
+
+		<operation>
+			<search position="after">
+			<![CDATA[
+				html += '  <input type="text" name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][price]" value="" placeholder="<?php echo $entry_price; ?>" class="form-control" /></td>';
+			]]>
+			</search>
+
+				<add>
+				<![CDATA[		
+				html += '    <td class="text-right"><select class="form-control"  name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][cost_prefix]" onchange=\'updateoptionfinalcost(document.getElementsByName("product_option[' + option_row + '][product_option_value][' + option_value_row + '][cost]")[0],this,"product_option[' + option_row + '][product_option_value][' + option_value_row + '][finalcost]"); \'>';
+				html += '      <option value="+">+</option>';
+				html += '      <option value="-">-</option>';
+				html += '    </select>';
+				html += '    <input type="text" class="form-control"  name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][cost]" value="0" size="5" onchange=\'updateoptionfinalcost(this,document.getElementsByName("product_option[' + option_row + '][product_option_value][' + option_value_row + '][cost_prefix]")[0],"product_option[' + option_row + '][product_option_value][' + option_value_row + '][finalcost]");\'/></td>';
+				html += '<td class="text-right"><input type="text"  class="form-control"  disabled="disabled"  name="product_option[' + option_row + '][product_option_value][' + option_value_row + '][finalcost]" value="0" size="8" /></td>';
+
+
+				]]></add>
+		</operation>
+		
+		<operation>
+			<search position="after" offset="4"><![CDATA[
+            <label class="col-sm-2 control-label" for="input-location"><?php echo $entry_location; ?></label>
+			]]>
+			</search>
+			<add><![CDATA[		  
+
+				<div class="form-group">
+                <label class="col-sm-2 control-label" for="supplier_id"><?php echo $entry_supplier; ?></label>
+                <div class="col-sm-10">
+                 <select name="supplier_id" id="supplier_id" onchange="enabledisableCost();" class="form-control">
+                     <option value="0" selected="selected"><?php echo $text_none; ?></option>
+                  <?php foreach ($suppliers as $supplier) { ?>
+                  <?php if ($supplier['supplier_id'] == $supplier_id) { ?>
+                  <option value="<?php echo $supplier['supplier_id']; ?>" selected="selected"><?php echo $supplier['name']; ?></option>
+                  <?php } else { ?>
+                  <option value="<?php echo $supplier['supplier_id']; ?>"><?php echo $supplier['name']; ?></option>
+                  <?php } ?>
+                  <?php } ?>
+                </select>
+               </div>
+                </div>
+			
+			 <div class="form-group">
+                <label class="col-sm-2 control-label" for="supproducturl"><?php echo $entry_supproducturl; ?></label>
+                <div class="col-sm-10">
+                  <input type="text" name="supproducturl" id="supproducturl" value="<?php echo $supproducturl; ?>" placeholder="<?php echo $entry_supproducturl; ?>"  class="form-control" />
+                </div>
+              </div>
+			
+			 <div class="form-group">
+                <label class="col-sm-2 control-label" for="supproducttitle"><span data-toggle="tooltip" title="<?php echo $entry_supproducttitle; ?>"><?php echo $entry_supproducttitle; ?></span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="supproducttitle" id="supproducttitle" value="<?php echo $supproducttitle; ?>" placeholder="<?php echo $entry_supproducttitle; ?>"  class="form-control" />
+                </div>
+              </div>
+			  
+			 <div class="form-group">
+                <label class="col-sm-2 control-label" for="cost"><span data-toggle="tooltip" id="cost_label" title="<?php echo $entry_productcost; ?>"><?php echo $entry_productcost; ?>  <?php echo $currency_name!=""?"($currency_name)":""; ?></span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="cost" id="cost" value="<?php echo $cost; ?>" onchange="updatefinalcost();" <?php echo $currency_name==''?'disabled="disabled"':''; ?>" placeholder="<?php echo $currency_name==''?'Please select supplier to set the cost':''; ?>"  class="form-control" />
+				  <input type="hidden" id="cost_currency_id" value="<?php echo $cost_currency_id; ?>">
+				  
+                </div>
+              </div>
+			  
+			<div class="form-group">
+                <label class="col-sm-2 control-label" for="finalcost"><span data-toggle="tooltip" title="<?php echo $entry_finalcost; ?>"><?php echo $entry_finalcost.' in '.$currency_code; ?> </span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="finalcost" id="finalcost" value="<?php echo $finalcost; ?>" class="form-control"  disabled="disabled"/>
+				  <input type="hidden" id="gp_method" value="<?php echo $gp_method; ?>">
+                </div>
+              </div>
+					
+           <div class="form-group">
+                <label class="col-sm-2 control-label" for="gp_percent"><span data-toggle="tooltip" title="<?php echo $entry_gp_percent; ?>"><?php echo $entry_gp_percent; ?></span></label>
+                <div class="col-sm-10">
+                  <input type="text" name="gp_percent" id="gp_percent" onchange="updatefinalcost();" value="<?php echo $gp_percent; ?>" placeholder="<?php echo $entry_gp_percent; ?>"  class="form-control" />
+                </div>
+              </div>
+			
+					
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="after" offset="4"><![CDATA[
+              <label class="col-sm-2 control-label" for="input-price"><?php echo $entry_price; ?></label>
+			]]>
+			</search>
+			<add><![CDATA[		           			
+				<div class="form-group">
+                <label class="col-sm-2 control-label" for="priceincurrency"><?php echo $entry_priceincurrency ?></label>
+                
+
+				<script>
+				function updateoptionfinalcost(objThis,objPorM,objTar)
+				{
+					if (objPorM.value == "+")
+						newCost = parseFloat(document.getElementsByName("cost")[0].value) + parseFloat(objThis.value);
+					else
+						newCost = parseFloat(document.getElementsByName("cost")[0].value) - parseFloat(objThis.value);
+					$.get('index.php?route=localisation/currency/convertedcurrency&token=<?php echo $token; ?>&direction=FOREIGN&currency_id=' + document.getElementById("cost_currency_id").value + '&amount=' + newCost, 
+					function (data) {
+										document.getElementsByName(objTar)[0].value = data;					
+									});
+				}
+				
+				function updateprice()
+				{
+					$.get('index.php?route=localisation/currency/convertedcurrency&token=<?php echo $token; ?>&direction=HOME&currency_id=' + document.getElementsByName("currency_id")[0].value + '&amount=' + document.getElementsByName("price")[0].value, 
+					function (data) {
+										document.getElementsByName("priceincurrency")[0].value = data;
+									});
+
+				}
+				
+				function updatefinalcost()
+				{
+
+					$('#cost').load('index.php?route=localisation/currency/convertedcurrency&token=<?php echo $token; ?>&direction=FOREIGN&currency_id=' + document.getElementById("cost_currency_id").value + '&amount=' + document.getElementsByName("cost")[0].value, function(response, status, xhr) {
+
+					
+					document.getElementById("finalcost").value = response;
+					
+					calc_method = $('#gp_method').val();	
+					igp = parseFloat($('#gp_percent').val());
+					if (igp!=0) {
+						icost= parseFloat(response);
+						if (calc_method=="P")
+							salesPrice = icost / ((100 - igp)/100);
+						else
+							salesPrice = icost + (icost * (igp/100));
+						document.getElementsByName("price")[0].value = salesPrice;		
+					}
+					updateprice();
+				});
+
+				}
+				
+				function enabledisableCost()
+				{
+
+					if ($('#supplier_id').val()==0){
+						$('#cost').attr('disabled','disabled');
+						$('#cost').attr('placeholder','Please select supplier');
+						$('#cost_label').html("Product Cost");
+						$('#cost_currency_id').val(0);
+					}
+					else{
+						$('#cost').removeAttr('disabled');
+						$.get('index.php?route=pomgmt/supplier/suppliercurrency&token=<?php echo $token; ?>&supplier_id=' + document.getElementsByName("supplier_id")[0].value , 
+						function (data) {
+								$('#cost_label').html('Product Cost in ' + data.split('|')[2]);
+								$('#cost').attr('placeholder','Product Cost in ' + data.split('|')[2]);
+								$('#cost_currency_id').val(data.split('|')[3]);
+						
+						//Moved here from down
+						$.get('index.php?route=pomgmt/supplier/getsuppliergp&token=<?php echo $token; ?>&supplier_id=' + document.getElementsByName("supplier_id")[0].value , 
+						function (data) {
+								$('#gp_percent').val(data);
+								updatefinalcost();
+								
+						});
+						
+						});
+					}	
+					
+				}
+
+			
+			
+				$("#input-price").change(function(){
+					updateprice();
+				});
+		
+			</script>
+
+			 <div class="col-sm-10">
+                  <div class="row">
+                    <div class="col-sm-4">
+	  			  <select name="currency_id" id="currency_id" class="form-control" onchange="updateprice();">
+							   <?php foreach ($currencies as $currency) {?>
+							  <?php if ($currency['code'] == $currency_code ) { ?>
+							  <option value="<?php echo $currency['currency_id']; ?>" selected="selected"> <?php echo $currency['title']; ?> </option>
+							  <?php } else { ?>
+							  <option value="<?php echo $currency['currency_id']; ?>"><?php echo $currency['title']; ?></option>
+							  <?php } ?>
+							  <?php } ?>
+					</select>
+					</div>
+					<div class="col-sm-4">
+					<input type="text" name="priceincurrency"  id="priceincurrency"  value="<?php echo $price; ?>" disabled="disabled" class="form-control"/>
+					</div>
+				</div>
+			</div>
+			</div>
+							
+			]]></add>
+		</operation>		
+	</file>	
+	<file name="admin/language/*/catalog/product.php">
+		<operation>
+			<search position="before"><![CDATA[
+			$_['entry_price']
+			]]>
+			</search>
+			<add><![CDATA[		
+			$_['entry_supplier']     = 'Supplier';
+			$_['entry_supproducttitle']     = 'Supplier Product Title';
+			$_['entry_supproducturl']     = 'Supplier product URL';			
+			$_['entry_priceincurrency']            = 'Price in Currency';
+			$_['entry_productcost']            = 'Product Cost';
+			$_['entry_finalcost']            = 'Final Cost in ';
+			$_['column_finalcost']            = 'Final Cost';
+			$_['entry_gp_percent']          = 'Gross Profit%';
+			$_['column_supplier']          = 'Supplier';
+			$_['error_poexists']            = 'Purchase order exists which use one of selected product. Deletion was aborted';
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/catalog/product_list.tpl">
+		<operation>
+			<search position="before"><![CDATA[
+			<?php if ($success) { ?>
+			]]>
+			</search>
+			<add><![CDATA[		
+		  <?php if ($data['error_poexists']!='') { ?>
+		  <div class="warning"><?php echo $data['error_poexists']; ?></div>
+		  <?php } ?>  
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[<td class="text-right"><?php if ($sort == 'p.price') { ?>]]>
+			</search>
+			<add><![CDATA[		
+			<td class="text-right"><?php if ($sort == 'supplier') { ?>
+                <a href="<?php echo $sort_supplier; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_supplier; ?></a>
+                <?php } else { ?>
+                <a href="<?php echo $sort_supplier; ?>"><?php echo $column_supplier; ?></a>
+                <?php } ?></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" offset="2">
+			<![CDATA[
+			 <input type="text" name="filter_price" value="<?php echo $filter_price; ?>" placeholder="<?php echo $entry_price; ?>" id="input-price" class="form-control" />
+			
+			]]>
+			</search>
+			<add><![CDATA[		
+			<div class="form-group">
+                <label class="control-label" for="input-supplier"><?php echo $entry_supplier; ?></label>
+                <input type="text" name="filter_supplier" value="<?php echo $filter_supplier; ?>" placeholder="<?php echo $entry_supplier; ?>" id="input-supplier" class="form-control" />
+              </div>
+			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" offset="2">
+			<![CDATA[
+			 <label class="control-label" for="input-quantity"><?php echo $entry_quantity; ?></label>
+			
+			]]>
+			</search>
+			<add><![CDATA[		
+			</div>
+			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" offset="1">
+			<![CDATA[
+			 <label class="control-label" for="input-quantity"><?php echo $entry_quantity; ?></label>
+			
+			]]>
+			</search>
+			<add><![CDATA[		
+			<div class="col-sm-4">
+			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			<td class="text-right"><?php if ($product['special']) { ?>
+			]]>
+			</search>
+			<add><![CDATA[		
+			<td class="text-right"><?php echo $product['supplier']; ?></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			$('input[name=\'filter_model\']').autocomplete({
+			]]>
+			</search>
+			<add><![CDATA[		
+			$('input[name=\'filter_supplier\']').autocomplete({
+				delay: 500,
+				source: function(request, response) {
+					$.ajax({
+						url: 'index.php?route=pomgmt/supplier/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+						dataType: 'json',
+						success: function(json) {		
+							response($.map(json, function(item) {
+								return {
+									label: item.name,
+									value: item.supplier_id
+								}
+							}));
+						}
+					});
+				}, 
+				select: function(event, ui) {
+					$('input[name=\'filter_supplier\']').val(ui.item.label);
+									
+					return false;
+				},
+				focus: function(event, ui) {
+					return false;
+				}
+			});
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			var filter_status = $('select[name=\'filter_status\']').val();
+			
+			]]>
+			</search>
+			<add><![CDATA[		
+			var filter_supplier = $('input[name=\'filter_supplier\']').val();
+	
+			if (filter_supplier != '*') {
+				url += '&filter_supplier=' + encodeURIComponent(filter_supplier);
+			}
+			]]></add>
+		</operation>
+	</file>
+	
+	
+	
+	<file name="admin/controller/catalog/product.php">
+		<operation>
+			<search position="before" index="1"><![CDATA[
+			foreach ($product_option['product_option_value'] as $product_option_value) {
+			]]>
+			</search>
+			<add><![CDATA[		
+			$this->load->model('localisation/currency');
+			]]></add>
+		</operation> 
+		<operation>
+			<search position="after" index="1"><![CDATA[
+			foreach ($product_option['product_option_value'] as $product_option_value) {
+			]]>
+			</search>
+			<add><![CDATA[		
+			if (isset($currencyInfo)) {
+				if ($product_option_value['cost_prefix']=="+")
+					$newCost = $data['cost'] + $product_option_value['cost'];
+				else
+					$newCost = $data['cost'] - $product_option_value['cost'];
+					
+				$resultInfo  = $this->model_localisation_currency->getConvertedCurrencyToForeign($currencyInfo['currency_id'],$newCost);		
+				$resExRate = $resultInfo['ExchangeValue'];
+			}
+			else {
+				$resExRate = 0;
+			}
+			]]></add>
+		</operation>		
+
+		<operation>
+			<search position="after"><![CDATA[
+			'price'                   => $product_option_value['price'],
+			]]>
+			</search>
+			<add><![CDATA[		
+			'cost'                   => $product_option_value['cost'],
+			'cost_prefix'            => $product_option_value['cost_prefix'],
+			'ExchangeValue'            => $resExRate,
+			]]></add>
+		</operation>
+	
+		<operation>
+			<search position="before"><![CDATA[
+				if (isset($this->request->post['shipping'])) {
+				]]>
+			</search>
+			<add><![CDATA[		
+
+				$this->load->model('pomgmt/supplier');
+				
+				if (isset($this->request->post['cost'])) {
+					$data['cost'] = $this->request->post['cost'];
+				} elseif (isset($product_info)) {
+					$data['cost'] = isset($product_info['cost'])?$product_info['cost']:0;
+				} else {
+					$data['cost'] = '';
+				}
+				if (isset($this->request->post['supplier_id'])) {
+					$data['supplier_id'] = $this->request->post['supplier_id'];
+				} elseif (isset($product_info)) {
+					$data['supplier_id'] = isset($product_info['supplier_id'])?$product_info['supplier_id']:0;
+				} else {
+					$data['supplier_id'] = 0;
+				} 
+				if (isset($this->request->post['supproducturl'])) {
+					$data['supproducturl'] = $this->request->post['supproducturl'];
+				} elseif (isset($product_info)) {
+					$data['supproducturl'] = isset($product_info['supproducturl'])?$product_info['supproducturl']:'';
+				} else {
+					$data['supproducturl'] = '';
+				}
+				if (isset($this->request->post['supproducttitle'])) {
+					$data['supproducttitle'] = $this->request->post['supproducttitle'];
+				} elseif (isset($product_info)) {
+					$data['supproducttitle'] = isset($product_info['supproducttitle'])?$product_info['supproducttitle']:'';
+				} else {
+					$data['supproducttitle'] = '';
+				}
+				
+				$this->load->model('localisation/currency');
+				
+				$data['currencies'] = $this->model_localisation_currency->getCurrencies();
+				
+				$supplier_info = $this->model_pomgmt_supplier->getSupplier($data['supplier_id']);
+
+				if (isset($this->request->post['gp_percent'])) {
+					$data['gp_percent'] = $this->request->post['gp_percent'];
+				} elseif (isset($product_info)) {
+					$data['gp_percent'] = isset($product_info['gp_percent'])?$product_info['gp_percent']:0;
+				} else {
+					$data['gp_percent'] = (!empty($supplier_info)) ? $supplier_info['gp_percent'] : $this->config->get('config_po_grossprofit');
+				} 
+				
+				$data['gp_method'] = $this->config->get('config_po_calculationmethod');
+				$data['currency_name'] = "";
+				$data['finalcost'] = '0';
+				$data['currency_code'] = $this->config->get('config_currency');
+				if (!empty($supplier_info)) {
+					$currencyInfo = $this->model_localisation_currency->getCurrency($supplier_info['currency_id']);
+					$data['currency_name'] = $currencyInfo['code'];
+					
+					$results = $this->model_localisation_currency->getConvertedCurrencyToForeign($currencyInfo['currency_id'],$data['cost']);	
+					
+					if (isset($this->request->post['finalcost'])) {
+						$data['finalcost'] = $this->request->post['finalcost'];
+					} elseif (isset($results)) {
+						$data['finalcost'] = $results['ExchangeValue'];
+					} else {
+						$data['finalcost'] = '0';
+					}
+				}
+
+				if (isset($this->request->post['cost_currency_id'])) {
+					$data['cost_currency_id'] = $this->request->post['cost_currency_id'];
+				} 
+				elseif (isset($currencyInfo)) {
+					$data['cost_currency_id'] = $currencyInfo['currency_id'];
+				} else {
+					$data['cost_currency_id'] = 0;
+				}
+						
+				
+				$this->load->model('pomgmt/supplier');
+				
+				$data['suppliers'] = $this->model_pomgmt_supplier->getSuppliers();
+				
+				if (isset($this->request->post['supplier_id'])) {			
+					$data['supplier_id'] = $this->request->post['supplier_id'];
+				} elseif (isset($product_info)) {
+					$data['supplier_id'] = isset($product_info['supplier_id'])?$product_info['supplier_id']:0;
+				} else {
+					$data['supplier_id'] = 0;
+				} 
+						
+				if (isset($this->request->post['priceincurrency'])) {
+					$data['priceincurrency'] = $this->request->post['priceincurrency'];
+				} else {
+					$data['priceincurrency'] = '';
+				}
+				
+				
+					]]>
+			</add>
+		</operation>
+		
+		<operation>
+			<search position="after"><![CDATA[
+			$data['entry_status'] = $this->language->get('entry_status');
+			]]>
+			</search>
+			<add><![CDATA[		
+			$data['entry_supplier'] = $this->language->get('entry_supplier');
+			$data['entry_supproducturl'] = $this->language->get('entry_supproducturl');
+			$data['entry_supproducttitle'] = $this->language->get('entry_supproducttitle');
+			]]></add>
+		</operation>	
+
+		<operation>
+			<search position="after"><![CDATA[
+			function getList() {	
+			]]>
+			</search>
+			<add><![CDATA[		
+			if (isset($this->error['poexists'])) {
+				$data['error_poexists'] = $this->error['poexists'];
+			} else {
+				$data['error_poexists'] = '';
+			}		
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			function validateDelete() {
+			]]>
+			</search>
+			<add><![CDATA[		
+			$this->load->model('catalog/product');		
+			foreach ($this->request->post['selected'] as $product_id) {
+				$results = $this->model_catalog_product->getProductCountInPO($product_id);
+				if ($results['ProductCount'] > 0)
+					$this->error['poexists'] = $this->language->get('error_poexists');
+	  		}			
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="after"><![CDATA[
+			$data['entry_price'] = $this->language->get('entry_price');
+			]]>
+			</search>
+			<add><![CDATA[		
+			$data['entry_priceincurrency'] = $this->language->get('entry_priceincurrency');
+			$data['entry_productcost'] = $this->language->get('entry_productcost');
+			$data['entry_finalcost'] = $this->language->get('entry_finalcost');
+			$data['column_finalcost'] = $this->language->get('column_finalcost');
+			$data['entry_gp_percent'] = $this->language->get('entry_gp_percent');
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="after"><![CDATA[
+			
+			'name'       => strip_tags(html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8')),	
+			]]>
+			</search>
+			<add><![CDATA[		
+			'mpn'      => $result['mpn'],
+			]]></add>
+		</operation> 
+		<operation>
+			<search position="after"><![CDATA[
+			'price'      => $result['price'],
+			]]>
+			</search>
+			<add><![CDATA[		
+			'supplier'      => $result['supplier'],
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$data['column_price'] = $this->language->get('column_price');
+			]]>
+			</search>
+			<add><![CDATA[		
+			$data['column_supplier'] = $this->language->get('column_supplier');
+			]]></add>
+		</operation> 
+		<operation>
+			<search position="before"><![CDATA[
+			if (isset($this->request->get['filter_price'])) {
+			]]>
+			</search>
+			<add><![CDATA[		
+			if (isset($this->request->get['filter_supplier'])) {
+				$filter_supplier = $this->request->get['filter_supplier'];
+			} else {
+				$filter_supplier = null;
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" ofsset="2"><![CDATA[
+			$url .= '&filter_price=' . $this->request->get['filter_price'];
+			]]>
+			</search>
+			<add><![CDATA[		
+			if (isset($this->request->get['filter_supplier'])) {
+				$url .= '&filter_supplier=' . urlencode(html_entity_decode($this->request->get['filter_supplier'], ENT_QUOTES, 'UTF-8'));
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			'filter_price'	  => $filter_price,
+			]]>
+			</search>
+			<add><![CDATA[		
+			'filter_supplier'	  => $filter_supplier,
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$data['filter_price'] = $filter_price;
+			]]>
+			</search>
+			<add><![CDATA[		
+			$data['filter_supplier'] = $filter_supplier;
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$data['sort_name']
+			]]>
+			</search>
+			<add><![CDATA[		
+			$data['sort_supplier'] = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . '&sort=supplier' . $url, 'SSL');
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/model/catalog/product.php">
+		<operation>
+			<search position="before"><![CDATA[
+			$this->db->query("INSERT INTO " . DB_PREFIX . "product SET
+			]]></search>
+			<add><![CDATA[		
+			$cost = isset($data['cost']) ? $data['cost'] : 0;
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="replace"><![CDATA[
+			. "', points = '" . (int)$data['points'] 
+			]]></search>
+			<add><![CDATA[		
+			. "', supproducttitle = '" . $data['supproducttitle'] . "', supproducturl = '" . $data['supproducturl'] . "', supplier_id = '" . (int)$data['supplier_id'] . "',cost = '". (float) $cost . "', points = '" . (int)$data['points'] . "', gp_percent = '" . (float)$data['gp_percent'] 
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET model =
+			]]></search>
+			<add><![CDATA[		
+			$cost = isset($data['cost']) ? $data['cost'] : 0;
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="replace"><![CDATA[
+			$this->db->escape($product_option_value['price_prefix']) 
+			]]>
+			</search>
+			<add><![CDATA[
+			$this->db->escape($product_option_value['price_prefix']) . "', cost  = '" . (float)$product_option_value['cost'] . "', cost_prefix = '" . $this->db->escape($product_option_value['cost_prefix'])
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			'price'                   => $product_option_value['price'],
+			]]>
+			</search>
+			<add><![CDATA[		
+			'cost'                   => $product_option_value['cost'],
+			'cost_prefix'            => $product_option_value['price_prefix'],
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			public function deleteProduct($product_id) {
+			]]>
+			</search>
+			<add><![CDATA[		
+			
+			public function getProductCountInPO($product_id)
+			{
+				$query = $this->db->query("SELECT COUNT(*) as ProductCount from " . DB_PREFIX . "purchase_order_product WHERE product_id='".$product_id."'");
+				return $query->row;
+			}				
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			public function getTotalProductsByManufacturerId($manufacturer_id) {
+			]]>
+			</search>
+			<add><![CDATA[		
+			
+			public function getTotalProductsBySupplierId($supplier_id) {
+				$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "product WHERE supplier_id = '" . (int)$supplier_id . "'");
+				return $query->row['total'];
+			}
+				
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$sql = "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+
+			]]>
+			</search>
+			<add><![CDATA[	
+			$sql = "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN suppliercompact sup ON (p.supplier_id = sup.supplier_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+				
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$sql = "SELECT COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)";
+
+			]]>
+			</search>
+			<add><![CDATA[	
+			$sql = "SELECT COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)  LEFT JOIN suppliercompact sup ON (p.supplier_id = sup.supplier_id)";
+				
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			if (isset($data['filter_price']) && !is_null($data['filter_price'])) {
+			]]>
+			</search>
+			<add><![CDATA[	
+			if (!empty($data['filter_supplier'])) {
+				$sql .= "  AND sup.supplier LIKE '" . $this->db->escape($data['filter_supplier']) . "%'";
+			}
+			]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$sql = "SELECT * FROM " . DB_PREFIX . "product
+			]]>
+			</search>
+			<add><![CDATA[	
+			$sql = "SELECT *,sup.supplier FROM " . DB_PREFIX . "product
+			]]>
+			</add>
+		</operation>
+	</file>
+
+	<file name="admin/model/localisation/currency.php">	
+		<operation>
+			<search position="before"><![CDATA[
+			public function getTotalCurrencies() {
+			]]></search>
+			<add><![CDATA[		
+			
+			public function getConvertedCurrencyToHome($currency_id,$amount)
+			{
+				if (empty($amount)) $amount=0;
+				$query = $this->db->query("SELECT value *  ". $amount . " as ExchangeValue FROM " . DB_PREFIX . "currency WHERE currency_id = '" . $this->db->escape($currency_id) . "'");
+				return $query->row;
+			}
+			public function getConvertedCurrencyToForeign($currency_id,$amount)
+			{
+				if (empty($amount)) $amount=0;
+				$query = $this->db->query("SELECT (1/value) *  ". $amount . " as ExchangeValue FROM " . DB_PREFIX . "currency WHERE currency_id = '" . $this->db->escape($currency_id) . "'");
+				return $query->row;
+			}	
+			]]></add>
+		</operation>	
+	</file>
+
+	<file name="catalog/model/localisation/currency.php">	
+		<operation>
+			<search position="before"><![CDATA[
+			public function getCurrencyByCode($currency) {
+			]]></search>
+			<add><![CDATA[		
+			
+			public function getConvertedCurrencyToHome($currency_id,$amount)
+			{
+				$query = $this->db->query("SELECT value *  ". $amount . " as ExchangeValue FROM " . DB_PREFIX . "currency WHERE currency_id = '" . $this->db->escape($currency_id) . "'");
+				return $query->row;
+			}
+			public function getConvertedCurrencyToForeign($currency_id,$amount)
+			{
+				$query = $this->db->query("SELECT (1/value) *  ". $amount . " as ExchangeValue FROM " . DB_PREFIX . "currency WHERE currency_id = '" . $this->db->escape($currency_id) . "'");
+				return $query->row;
+			}	
+			]]></add>
+		</operation>	
+	</file>
+	
+	<file name="catalog/controller/product/product.php">	
+		<operation>
+			<search position="before"><![CDATA[
+			public function index() { 
+			]]></search>
+			<add><![CDATA[		
+
+			public function convertedcurrency($direction,$currency_id,$amount) {
+			
+				$this->load->model('localisation/currency');		
+				if ($direction=='HOME')		
+					$results = $this->model_localisation_currency->getConvertedCurrencyToHome($currency_id,$amount);
+				else
+					$results = $this->model_localisation_currency->getConvertedCurrencyToForeign($currency_id,$amount);
+				
+				return $results['ExchangeValue'];
+			}	
+			]]></add>
+		</operation>	
+	</file>
+	
+	
+	
+	<file name="admin/controller/localisation/currency.php">	
+		<operation>
+			<search position="before"><![CDATA[
+			public function add() {
+			]]></search>
+			<add><![CDATA[		
+			
+	public function convertedcurrency() {
+		
+		$this->load->model('localisation/currency');
+		$output = '';
+		if ($this->request->get['direction']=='HOME')		
+			$results = $this->model_localisation_currency->getConvertedCurrencyToHome($this->request->get['currency_id'],$this->request->get['amount']);
+		else
+			$results = $this->model_localisation_currency->getConvertedCurrencyToForeign($this->request->get['currency_id'],$this->request->get['amount']);
+		foreach ($results as $result) {
+			$output = $result;
+		}		
+		$this->response->setOutput($output);
+	}
+				
+			]]></add>
+		</operation>	
+	</file>
+	
+	<file name="admin/view/template/sale/order_list.tpl">	
+		<operation>
+			<search position="after"><![CDATA[
+			<div class="pull-right">
+			]]></search>
+			<add><![CDATA[
+			<button type="submit" id="button-sendmail" form="form-order" formaction="<?php echo $send_mail; ?>" data-toggle="tooltip" title="<?php echo $button_send_email; ?>" class="btn btn-info"><i class="fa fa-envelope"></i></button>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			location = url;
+			]]></search>
+			<add><![CDATA[        
+			var filter_po_generated = $('select[name=\'filter_po_generated\']').val();
+			if (filter_po_generated != '*') {
+				url += '&filter_po_generated=' + encodeURIComponent(filter_po_generated);
+			}	
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			<td class="text-right"><?php echo $column_action; ?></td>
+			]]></search>
+			<add><![CDATA[        
+			<td class="text-left"><?php if ($sort == 'po_generated') { ?>
+			<a href="<?php echo $sort_po_generated; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_po_generated; ?></a>
+			<?php } else { ?>
+			<a href="<?php echo $sort_po_generated; ?>"><?php echo $column_po_generated; ?></a>
+			<?php } ?></td>	
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after" offset="1"><![CDATA[
+			<input type="text" name="filter_customer" value="<?php echo $filter_customer; ?>" placeholder="<?php echo $entry_customer; ?>" id="input-customer" class="form-control" />
+			]]></search>
+			<add><![CDATA[        			
+				<div class="form-group">
+					<label class="control-label" for="input-date-added"><?php echo $column_po_generated; ?></label>
+					<select name="filter_po_generated" id="input-po-generated" class="form-control">    
+					<option value="*" <?php echo $filter_po_generated?'':'selected'; ?> ></option>
+					<option value="All" <?php echo $filter_po_generated=='All'?'selected':''; ?> >All</option>
+					<option value="Partial" <?php echo $filter_po_generated=='Partial'?'selected':''; ?> >Partial</option>
+					<option value="None" <?php echo $filter_po_generated=='None'?'selected':''; ?> >None</option>
+					</select>				  
+				</div>				
+			]]></add>
+		</operation>				
+		<operation>
+			<search position="after"><![CDATA[
+			<td class="text-left"><?php echo $order['date_modified']; ?></td>
+			]]></search>
+			<add><![CDATA[        
+			<td class="text-left"><?php echo $order['po_generated']; ?></td>
+			]]></add>
+		</operation>			
+		<operation error="skip">
+			<search position="replace"><![CDATA[
+			<td class="text-center" colspan="8"><?php echo $text_no_results; ?></td>
+			]]></search>
+			<add><![CDATA[        
+			<td class="text-center" colspan="9"><?php echo $text_no_results; ?></td>
+			]]></add>
+		</operation>			
+	</file>
+	
+	<file name="admin/view/template/sale/order_info.tpl"> 
+		<operation>
+			<search position="after" index="1"><![CDATA[
+			<div class="container-fluid">
+			]]></search>
+			<add><![CDATA[		
+				<?php if (isset($posucess) && $posuccess) { ?>
+				<div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $posuccess; ?>
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+				</div>
+				<?php } ?>
+				<?php if ($success) { ?>
+				<div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+				</div>
+				<?php } ?>
+				
+				<?php if ($error_warning) { ?>
+				<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+				</div>
+			  <?php } ?>
+
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			<div class="pull-right">
+			]]></search>
+			<add><![CDATA[
+			<div class="pull-right"><?php if ($show_generate) { ?>
+			<a onclick="$('form').submit();" data-toggle="tooltip" title="<?php echo $button_generatepo; ?>" class="btn btn-info"><i class="fa fa-file-o"></i></a><?php } ?>
+			<a onclick="$('#form').attr('action', '<?php echo $send_mail_single; ?>'); $('#form').submit();" data-toggle="tooltip" title="<?php echo $button_send_email; ?>" class="btn btn-info"><i class="fa fa-envelope"></i></a>
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[
+			<div class="tab-content">
+			]]></search>
+			<add><![CDATA[		
+			<form action="<?php echo $generatepo; ?>" method="post" enctype="multipart/form-data" id="form">
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="replace"><![CDATA[
+			<td class="text-left"><?php echo $column_product; ?></td>
+			]]></search>
+			<add><![CDATA[		
+			<td width="1" class="text-center"><input type="checkbox" onclick="$('.selected').prop('checked', this.checked);" /></td>
+			<td class="text-left"><?php echo $column_product; ?></td>
+			<td class="text-left"><?php echo $column_supplier; ?></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			<td class="text-left"><?php echo $product['model']; ?></td>
+			]]></search>
+			<add><![CDATA[		
+			<td class="text-left"><?php echo $product['supplier']; ?></td>
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before"><![CDATA[
+			<td class="text-left"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a>
+			]]></search>
+			<add><![CDATA[		
+			<td class="text-center"><?php 
+			if ($product['supplier']!=''){
+				if ($product['po_product_id']==0){
+					if ($product['selected']) { ?>
+						<input type="checkbox" class="selected" name="selected[]" value="<?php echo $product['order_product_id']; ?>" checked="checked" />
+						<?php } else { ?>
+						<input type="checkbox" class="selected" name="selected[]" value="<?php echo $product['order_product_id']; ?>" />
+						<?php } 
+				}
+				else {
+				?>
+					<img src="view/image/generated.png"  title="<?php echo $text_po_generated; ?>"/>
+			<?php
+				}
+			}
+			else {
+			?>
+				<img src="view/image/missing.png" title="<?php echo $text_supplier_notdefined; ?>"/>
+			<?php 
+			} 
+			?>
+			</td>
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="replace"><![CDATA[
+			<td colspan="4"
+			]]></search>
+			<add><![CDATA[		
+			<td colspan="6"
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after" offset="4">
+			<![CDATA[
+			<?php echo $fraud['content']; ?>
+			]]></search>
+			<add><![CDATA[		
+			</form>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			<li><a href="#tab-product" data-toggle="tab">
+			]]></search>
+			<add><![CDATA[		
+			<?php if($ispoaccessible) { ?>
+			<li><a href="#tab-polist" data-toggle="tab" id="tab_polist"><?php echo $tab_purchase_order; ?></a></li>
+			<?php } ?>
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before" >
+			<![CDATA[
+			<div class="tab-pane" id="tab-history">
+			]]></search>
+			<add><![CDATA[		
+			<?php if($ispoaccessible) { ?>
+			<div id="tab-polist" class="tab-pane">
+			<table class="table table-bordered">
+			  <thead>
+				<tr>
+					<td class="text-right"><?php echo $column_orderid; ?></td>
+					<td class="text-left"><?php echo $column_supplier; ?></td>				
+					<td class="text-left"><?php echo $column_status; ?></td>
+					<td class="text-right"><?php echo $column_action; ?></td>
+				</tr>
+			  </thead>
+			  <tbody>
+				<?php if ($purchaseorders) { ?>
+				<?php foreach ($purchaseorders as $purchaseorder) { ?>
+				<tr>
+				  <td class="text-right"><?php echo $purchaseorder['order_number']; ?></td>
+				  <td class="text-left"><?php echo $purchaseorder['supplier']; ?></td>
+				  <td class="text-left"><?php echo $purchaseorder['status']; ?></td>
+				  <td class="text-right"><a class="btn btn-info" title="" data-toggle="tooltip" href="<?php echo $purchaseorder['href']; ?>" data-original-title="<?php echo $purchaseorder['text']; ?>"><i class="fa fa-eye"></i></a></td>
+				</tr>
+				<?php } ?>
+				<?php } else { ?>
+				<tr>
+				  <td class="text-center" colspan="5"><?php echo $text_no_results; ?></td>
+				</tr>
+				<?php } ?>
+			  </tbody>			
+			</table>
+			</div>
+			<?php } ?>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after">
+			<![CDATA[
+			$(document).ready(function() {
+			]]></search>
+			<add><![CDATA[		
+ 		      <?php if (isset($this->request->get['tab'])) {
+				echo "$('#" . $this->request->get['tab'] . "').click();";
+			   } ?>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			<a href="#tab-payment"
+			]]></search>
+			<add><![CDATA[		
+			<a href="#tab-payment" id="tab_payment"
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			<a href="#tab-shipping"
+			]]></search>
+			<add><![CDATA[		
+			<a href="#tab-shipping" id="tab_shipping"
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			<a href="#tab-product"
+			]]></search>
+			<add><![CDATA[		
+			<a href="#tab-product" id="tab_product"
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			<a href="#tab-history"
+			]]></search>
+			<add><![CDATA[		
+			<a href="#tab-history" id="tab_history"
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			<a href="#tab-action"
+			]]></search>
+			<add><![CDATA[		
+			<a href="#tab-action" id="tab_action"
+			]]></add>
+		</operation>
+	</file>
+	
+
+	<file name="admin/controller/sale/order.php">
+		<operation>
+			<search position="before"><![CDATA[
+			if ($order_info['invoice_no']) {
+			]]></search>
+			<add><![CDATA[        
+			if (isset($this->session->data['success'])) {
+				$data['success'] = $this->session->data['success'];
+
+				unset($this->session->data['success']);
+			} else {
+				$data['success'] = '';
+			}
+			if (isset($this->session->data['warning'])) {
+				$data['error_warning'] = $this->session->data['warning'];
+				unset($this->session->data['warning']);
+			} else {
+				$data['error_warning'] = '';
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$data['commission']
+			]]></search>
+			<add><![CDATA[        
+			$data['send_mail_single'] = $this->url->link('sale/order/preparemail', 'order_id='.$order_id.'&token=' . $this->session->data['token'], 'SSL');			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" index="1"><![CDATA[
+			$data['invoice']
+			]]></search>
+			<add><![CDATA[        
+			$data['send_mail'] = $this->url->link('sale/order/preparemail', 'token=' . $this->session->data['token'], 'SSL');
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="before"><![CDATA[
+			$data['button_invoice_print']
+			]]></search>
+			<add><![CDATA[ 
+			$data['button_send_email'] = $this->language->get('button_send_email');
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			public function invoice() {
+			]]></search>
+			<add><![CDATA[        
+	public function preparemail() {
+		if (isset($this->request->post['selected'])) {
+			$orders = $this->request->post['selected'];
+		} elseif (isset($this->request->get['order_id'])) {
+			$orders[] = $this->request->get['order_id'];
+		}
+		$this->load->model('pomgmt/po');
+		$polist = $this->model_pomgmt_po->getPOFromOrders($orders);
+		$this->email($polist);
+		$this->session->data['success'] = "Email(s) sent successfully";
+		$this->response->redirect($this->url->link('sale/order', 'token=' . $this->session->data['token'] , 'SSL'));
+		
+	}
+	public function email($orders) {
+				
+		$this->load->language('pomgmt/po');
+
+		$data['title'] = $this->language->get('heading_title');		
+		
+		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+			$data['base'] = HTTPS_SERVER;
+		} else {
+			$data['base'] = HTTP_SERVER;
+		}
+
+		$data['direction'] = $this->language->get('direction');
+		$data['language'] = $this->language->get('code');
+
+		$data['text_po'] = $this->language->get('text_po');
+
+		$data['text_order_id'] = $this->language->get('text_order_id');
+		$data['text_invoice_no'] = $this->language->get('text_invoice_no');
+		$data['text_invoice_date'] = $this->language->get('text_invoice_date');
+		$data['text_date_added'] = $this->language->get('text_date_added');
+		$data['text_telephone'] = $this->language->get('text_telephone');
+		$data['text_fax'] = $this->language->get('text_fax');
+		$data['text_to'] = $this->language->get('text_to');
+		$data['text_ship_to'] = $this->language->get('text_ship_to');
+		$data['text_payment_method'] = $this->language->get('text_payment_method');
+		$data['text_shipping_method'] = $this->language->get('text_shipping_method');
+		$data['text_total'] = $this->language->get('text_total');
+		$data['text_vat'] = $this->language->get('text_vat');
+		$data['text_delivery_charge'] = $this->language->get('text_delivery_charge');
+
+		$data['column_product'] = $this->language->get('column_product');
+		$data['column_model'] = $this->language->get('column_model');
+		$data['column_mpn'] = $this->language->get('column_mpn');
+		$data['column_quantity'] = $this->language->get('column_quantity');
+		$data['column_price'] = $this->language->get('column_price');
+		$data['column_total'] = $this->language->get('column_total');
+		$data['column_comment'] = $this->language->get('column_comment');		
+		
+		$this->load->model('pomgmt/po');
+
+		$this->load->model('setting/setting');
+
+
+		foreach ($orders as $order_id) {
+			$order_info = $this->model_pomgmt_po->getOrderForPrint($order_id);
+			
+			if ($order_info && ($order_info['supplier_email']!="")) {
+				$store_info = $this->model_setting_setting->getSetting('config', $order_info['store_id']);
+				
+				if ($store_info) {
+					$store_name = $store_info['config_name'];
+					$store_address = $store_info['config_address'];
+					$store_email = $store_info['config_email'];
+					$store_telephone = $store_info['config_telephone'];
+					$store_fax = $store_info['config_fax'];
+				} else {
+					$store_name = $this->config->get('config_name');
+					$store_address = $this->config->get('config_address');
+					$store_email = $this->config->get('config_email');
+					$store_telephone = $this->config->get('config_telephone');
+					$store_fax = $this->config->get('config_fax');
+				}
+				
+				if ($order_info['invoice_no']) {
+					$invoice_no = $order_info['invoice_prefix'] . $order_info['invoice_no'];
+				} else {
+					$invoice_no = '';
+				}
+				
+				$find = array(
+					'{firstname}',
+					'{lastname}',
+					'{company}',
+					'{address_1}',
+					'{address_2}',
+					'{city}',
+					'{postcode}',
+					'{zone}',
+					'{zone_code}',
+					'{country}',
+				);
+
+				$replace = array(
+					'firstname' => $order_info['supplier_firstname'],
+					'lastname'  => $order_info['supplier_lastname'],
+					'company'   => $order_info['supplier_name'],
+					'address_1' => $order_info['supplier_address_1'],
+					'address_2' => $order_info['supplier_address_2'],
+					'city'      => $order_info['supplier_city'],
+					'postcode'  => $order_info['supplier_postcode'],
+					'zone'      => $order_info['supplier_zone'],
+					'zone_code' => $order_info['supplier_zone_code'],
+					'country'   => $order_info['supplier_country']				);
+				
+				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+
+				$supplier_address = str_replace(array("\r\n", "\r", "\n"), '<br />',  str_replace($find, $replace, $format));
+				
+				if ($order_info['send_to']=='0'){
+				
+					$find = array(
+						'{firstname}',
+						'{lastname}',
+						'{company}',
+						'{address_1}',
+						'{address_2}',
+						'{city}',
+						'{postcode}',
+						'{zone}',
+						'{zone_code}',
+						'{country}',
+						'{telephone}'
+					);
+
+					$replace = array(
+						'firstname' => $order_info['shipping_firstname'],
+						'lastname'  => $order_info['shipping_lastname'],
+						'company'   => $order_info['shipping_company'],
+						'address_1' => $order_info['shipping_address_1'],
+						'address_2' => $order_info['shipping_address_2'],
+						'city'      => $order_info['shipping_city'],
+						'postcode'  => $order_info['shipping_postcode'],
+						'zone'      => $order_info['shipping_zone'],
+						'zone_code' => $order_info['shipping_zone_code'],
+						'country'   => $order_info['shipping_country'],
+						'telephone'   => $order_info['telephone']
+					);
+					$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}'."\n\nTelephone:".'{telephone}';;
+					
+					$shipping_address = str_replace(array("\r\n", "\r", "\n"), '<br />',  str_replace($find, $replace, $format));
+				}
+				else
+				{
+					$find = array(
+						'{store_name}',
+						'{store_address}',
+						'{store_telephone}',
+						'{country}'
+					);
+
+					$replace = array(
+						'store_name' => $store_name,
+						'store_address' => $store_address,
+						'store_telephone'  => $store_telephone
+					);
+					$format = '{store_name}' . "\n" . '{store_address}' . "\n Tel:" . '{store_telephone}' ;
+					
+					$shipping_address = str_replace(array("\r\n", "\r", "\n"), '<br />',  str_replace($find, $replace, $format));				
+				}
+				
+				$product_data = array();
+
+				$products = $this->model_pomgmt_po->getOrderProducts($order_id);
+
+				foreach ($products as $product) {
+					$option_data = array();
+
+					$options = $this->model_pomgmt_po->getOrderOptions($order_id, $product['order_product_id']);
+
+					foreach ($options as $option) {
+						if ($option['type'] != 'file') {
+							$value = $option['value'];
+						} else {
+							$value = utf8_substr($option['value'], 0, utf8_strrpos($option['value'], '.'));
+						}
+						
+						$option_data[] = array(
+							'name'  => $option['name'],
+							'value' => $value
+						);								
+					}
+
+					$product_data[] = array(
+						'name'     => $product['name'],
+						'model'    => $product['model'],
+						'description'    => $product['description'],
+						'mpn'	   => isset($product['mpn'])?$product['mpn']:'',
+						'option'   => $option_data,
+						'quantity' => $product['quantity'],
+						'price'    =>  number_format($product['price'],2),
+						'total'    =>  number_format($product['total'],2)
+					);
+				}
+				
+				$voucher_data = array();
+				
+				
+					
+
+				$data['order'] = array(
+					'order_id'	       => $order_id,
+					'invoice_no'       => $invoice_no,
+					'date_added'       => date($this->language->get('date_format_short'), strtotime($order_info['date_added'])),
+					'store_name'       => $order_info['store_name'],
+					'store_url'        => rtrim($order_info['store_url'], '/'),
+					'store_address'    => nl2br($store_address),
+					'store_email'      => $store_email,
+					'store_telephone'  => $store_telephone,
+					'store_fax'        => $store_fax,
+					'email'            => $order_info['email'],
+					'telephone'        => $order_info['telephone'],
+					'subtotal'		   =>  number_format($order_info['total'],2),
+					'delivery_charge'  =>  number_format((float)$order_info['delivery_charge'],2),
+					'vat'              =>  number_format($order_info['vat'],2),					
+					'shipping_address' => $shipping_address,
+					'supplier_address' => $supplier_address,
+					'poinvoice_ref' => $order_info['poinvoice_ref'],
+					'shipping_method'  => $order_info['shipping_method'],
+					'product'          => $product_data,
+					'voucher'          => $voucher_data,
+					'comments'          => nl2br($order_info['comments'])
+				);
+				
+				
+				
+				$grandTotal = $order_info['delivery_charge'] +  $order_info['vat'] + $order_info['total'];
+				
+				if (!empty($order_info['user_id'])) {
+					$po_url = HTTP_SERVER.'index.php?route=pomgmt/po/update&order_id='.$order_id.'&auth_id='.$order_info['auth_token'];
+					$supplier_login_allowed = true;
+				}
+				else {
+					$po_url = '';
+					$supplier_login_allowed = false;					
+				}
+					
+				$data['po_no'] = $invoice_no;
+				$data['po_url'] = $po_url;
+				$data['supplier_login_allowed'] = $supplier_login_allowed;
+				$data['store_name'] = $order_info['store_name'];
+				$data['store_address'] = nl2br($store_address);
+				$data['supplier_name'] = $order_info['supplier_name'];
+				$data['shipping_address'] = $shipping_address;
+				$data['comments'] = nl2br($order_info['comments']);
+				$data['delivery_charge'] = number_format($order_info['delivery_charge'],2);
+				$data['vat'] = number_format($order_info['vat'],2);
+				$data['subtotal'] = number_format($order_info['total'],2);
+				$data['grand_total'] = number_format($grandTotal,2);
+				
+				
+
+				//$this->template = 'mailtemplates/po_email.html';	
+				
+				if ($this->config->get('config_po_frommail'))
+					$fromID = $this->config->get('config_po_frommail');
+				else
+					$fromID = $this->config->get('config_email');
+					
+				$mail = new Mail();	
+				$mail->protocol = $this->config->get('config_mail_protocol');
+				$mail->parameter = $this->config->get('config_mail_parameter');
+				$mail->hostname = $this->config->get('config_smtp_host');
+				$mail->username = $this->config->get('config_smtp_username');
+				$mail->password = $this->config->get('config_smtp_password');
+				$mail->port = $this->config->get('config_smtp_port');
+				$mail->timeout = $this->config->get('config_smtp_timeout');				
+				//$mail->setTo("rameshk74@gmail.com");
+				$mail->setTo($order_info['supplier_email']);
+				$mail->setFrom($fromID);
+				$ccID = $this->config->get('config_po_ccmail');
+				$bccID= $this->config->get('config_po_bccmail');
+				if (!empty($ccID))
+					$mail->setCc($ccID);
+				if (!empty($bccID))
+					$mail->setBcc($bccID);				
+				$mail->setSender($store_name);
+				$mail->setSubject("Purchase Order from " .$order_info['store_name']. " - Ref : ".$invoice_no);					
+				
+				$mail->setHtml($this->load->view('mailtemplates/po_email.html', $data));
+				
+				if (!empty($order_info['fileattach']))
+					$mail->addAttachment($order_info['fileattach']);
+				
+				//echo($this->render());
+				$mail->send();				
+				$this->model_pomgmt_po->setOrderStatusAsSent($order_id);
+				$this->session->data['success'] = "Email(s) sent successfully";
+			}
+		}
+		$this->getList();	
+		//echo ("Email(s) sent successfully");
+	}
+	  
+				
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			function getList() {
+			]]></search>
+			<add><![CDATA[        
+			$this->load->model('sale/order');
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			if (isset($this->request->get['filter_date_modified'])) {
+			]]></search>
+			<add><![CDATA[        
+			if (isset($this->request->get['filter_po_generated'])) {
+				$filter_po_generated = $this->request->get['filter_po_generated'];
+			} else {
+				$filter_po_generated = null;
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" offset="1"><![CDATA[
+			$url .= '&filter_date_modified=' . $this->request->get['filter_date_modified'];
+			]]></search>
+			<add><![CDATA[        
+			if (isset($this->request->get['filter_po_generated'])) {
+				$url .= '&filter_po_generated=' . $this->request->get['filter_po_generated'];
+			}
+			]]></add>
+		</operation>												
+		<operation>
+			<search position="after"><![CDATA[
+			'filter_date_modified' => $filter_date_modified,
+			]]></search>
+			<add><![CDATA[        
+			'filter_po_generated'   => $filter_po_generated,
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$data['sort_date_modified']
+			]]></search>
+			<add><![CDATA[        
+			$data['sort_po_generated'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=pop_count' . $url, 'SSL');
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before"><![CDATA[
+			$data['filter_order_status']
+			]]></search>
+			<add><![CDATA[        
+			$data['filter_po_generated'] = $filter_po_generated;
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$data['text_order_status']
+			]]></search>
+			<add><![CDATA[		
+			$data['tab_purchase_order'] = $this->language->get('tab_purchase_order');
+			$data['text_no_results'] = $this->language->get('text_no_results');
+			$data['text_po_generated'] = $this->language->get('text_po_generated');
+			$data['text_supplier_notdefined'] = $this->language->get('text_supplier_notdefined');
+			$data['button_generatepo'] = $this->language->get('button_generatepo');			
+			$data['column_supplier'] = $this->language->get('column_supplier');
+			$data['column_orderid'] = $this->language->get('column_orderid');
+			$data['column_status'] = $this->language->get('column_status');
+			$data['column_action'] = $this->language->get('column_action');
+			if ($order_info['parent_order_id']!=0)
+				$data['show_generate'] = 0;
+			else
+				$data['show_generate'] = 1;
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$data['column_date_modified'] = $this->language->get('column_date_modified');
+			]]></search>
+			<add><![CDATA[		
+			$data['column_po_generated'] = $this->language->get('column_po_generated');			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			'date_modified' => date($this->language->get('date_format_short'), strtotime($result['date_modified'])),
+			]]></search>
+			<add><![CDATA[		
+			'po_generated' => $result['po_gen_status'],
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="after"><![CDATA[
+			'model'    		   => $product['model'],
+			]]></search>
+			<add><![CDATA[		
+			'supplier'    	=> $product['supplier'],
+			'po_product_id' => $product['po_product_id'],
+			'selected'      => isset($this->request->post['selected']) && in_array($product['order_id'], $this->request->post['selected']),
+
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" index="2"><![CDATA[
+			$data['invoice']
+			]]></search>
+			<add><![CDATA[		
+			$data['generatepo'] = $this->url->link('sale/order/generatepo', 'token=' . $this->session->data['token'] . '&order_id=' . (int)$this->request->get['order_id'], 'SSL');			
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before" index="3"><![CDATA[
+			$data['breadcrumbs'] =
+			]]></search>
+			<add><![CDATA[		
+			if (isset($this->session->data['posuccess'])) {
+				$data['posuccess'] = $this->session->data['posuccess'];
+				unset($this->session->data['posuccess']);
+			} else {
+				$data['posuccess'] = '';
+			}			
+			]]></add>
+		</operation>			
+		<operation>
+			<search position="before"><![CDATA[
+			public function invoice() {
+			]]></search>
+			<add><![CDATA[
+			public function generatepo() {
+				$this->load->language('sale/order');
+				
+				$this->load->model('sale/order');
+				$order_product_ids = array();
+				$selCount = 0;
+				if (isset($this->request->post['selected'])){				
+					$selCount++;
+					foreach ($this->request->post['selected'] as $order_product_id) {
+						array_push($order_product_ids,$order_product_id);
+					}		
+					$po_list=$this->model_sale_order->generatepo($order_product_ids);
+					if ($this->config->get('config_poemail_auto')==1)
+						$this->email($po_list);	
+					
+				}
+				if ($selCount > 0) {
+					$this->session->data['success'] = $this->language->get('text_posuccess');
+					$this->response->redirect($this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . "&order_id=".$this->request->get['order_id']."&tab=polist", 'SSL'));
+				}
+				else {
+					$this->session->data['warning'] = $this->language->get('text_noselected');
+					$this->response->redirect($this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . "&order_id=".$this->request->get['order_id'], 'SSL'));
+				}
+				//$this->redirect($this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . "&order_id=".$this->request->get['order_id'], 'SSL'));
+				//$this->getList();				
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$data['products'] = array();
+			]]></search>
+			<add><![CDATA[		
+			$data['purchaseorders'] = array();
+			$purchaseorders = $this->model_sale_order->getOrderPurchaseOrders($this->request->get['order_id']);
+			
+			foreach ($purchaseorders as $purchaseorder) {
+				$option_data = array();
+
+
+				$data['purchaseorders'][] = array(
+					'order_id' => $purchaseorder['order_id'],
+					'order_number' => $purchaseorder['orderno'],
+					'supplier'       => $purchaseorder['supplier'],
+					'status'    	 	   => $purchaseorder['status'],
+					'href'     		   => $this->url->link('pomgmt/po/update', 'token=' . $this->session->data['token'] . '&order_id=' . $purchaseorder['order_id'], 'SSL'),
+					'text' => 'View'
+				);
+			}
+			if ($this->user->hasPermission('access','pomgmt/po'))
+				$data['ispoaccessible'] = true;
+			else
+				$data['ispoaccessible'] = false;
+			]]></add>
+		</operation>		
+	</file>
+	
+	<file name="admin/language/*/sale/order.php">
+		<operation>
+			<search position="before" index="1"><![CDATA[
+			$_['column_product']
+			]]></search>
+			<add><![CDATA[		
+			$_['column_supplier']          = 'Supplier';
+			$_['column_orderid']          = 'Order No';
+			$_['column_status']          = 'Status';
+			$_['column_action']          = 'Action';
+			$_['button_generatepo']          = 'Generate PO';
+			$_['column_po_generated']    = 'PO Generated';
+			$_['button_send_email']    = 'Email PO';
+			$_['tab_purchase_order']       = 'Purchase Orders';	
+			$_['text_posuccess']                            = 'Success: Purchase orders generated successfully!';
+			$_['text_noselected']                            = 'Please select the products for which you want to generate PO.';
+			$_['text_supplier_notdefined']				= "Supplier is not defined for this product";
+			$_['text_po_generated']				= "Puchase order is already generated for this product";			
+			]]></add>
+		</operation>				
+	</file>
+	
+
+	<file name="admin/model/sale/order.php">
+		<operation>
+			<search position="before" offset="4"><![CDATA[
+			public function getOrderProducts($order_id) {
+			]]></search>
+			<add><![CDATA[	
+			$data['orders'] = array();
+			$result['po_gen_status'] = "None";
+			foreach ($query->rows as $result) {
+				$result['po_gen_status'] =  $result['pop_count']==0 ? "None" : ($result['pop_count'] >= $result['op_count'] ? "All" : "Partial");
+				if (!empty($data['filter_po_generated'])) {
+					if ($result['po_gen_status'] != $data['filter_po_generated'])
+						continue;
+				}
+				$data['orders'][] = $result;
+			}
+			
+			return $data['orders'];
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="after" ><![CDATA['o.date_modified',]]></search>
+			<add><![CDATA['pop_count',]]></add>
+		</operation>
+		<operation>
+			<search position="after" ><![CDATA[=> $order_query->row['order_id'],]]></search>
+			<add><![CDATA['parent_order_id'                => $order_query->row['parent_order_id'],]]></add>
+		</operation>
+		<operation>
+			<search position="before" ><![CDATA[
+			public function createInvoiceNo($order_id) {
+			]]></search>
+			<add><![CDATA[	
+			public function createPONo($order_id) {			
+				$this->db->query("UPDATE `" . DB_PREFIX . "purchase_order` SET invoice_no = '" . (int)$order_id . "' WHERE order_id = '" . (int)$order_id . "'");					
+			}
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="before" ><![CDATA[
+			if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+			]]></search>
+			<add><![CDATA[	
+			$sql .= " GROUP BY o.order_id ";
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="replace"><![CDATA[o.date_modified FROM `" . DB_PREFIX . "order` o"]]></search>
+			<add><![CDATA[(SELECT count(*) FROM " . DB_PREFIX . "order_product op WHERE op.order_id=o.order_id) as op_count, 			SUM((SELECT count(*) FROM " . DB_PREFIX . "purchase_order_product pop WHERE pop.order_id=po.order_id)) as pop_count, o.date_modified FROM `" . DB_PREFIX . "order` o"." LEFT JOIN " . DB_PREFIX . "purchase_order po ON po.sales_order_id=o.order_id"]]></add>
+		</operation>			
+		<operation>
+			<search position="before"><![CDATA[
+			public function getOrder($order_id) {
+			]]></search>
+			<add><![CDATA[	
+			public function getOrderPurchaseOrders($order_id) {
+				$query = $this->db->query("SELECT order_id,order_id as orderno,s.name as supplier,os.name as status from " . DB_PREFIX . "purchase_order po INNER JOIN " . DB_PREFIX . "supplier s on s.supplier_id = po.supplier_id inner join " . DB_PREFIX . "order_status os on po.order_status_id = os.order_status_id where os.language_id='".(int)$this->config->get('config_language_id')."' AND po.sales_order_id='" . (int)$order_id . "'");
+				return $query->rows;
+ 			}
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="replace" ><![CDATA[
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id 
+			]]></search>
+			<add><![CDATA[	
+			$query = $this->db->query("SELECT o.*,s.name as supplier FROM " . DB_PREFIX . "order_product o INNER JOIN " . DB_PREFIX . "product p ON  o.product_id = p.product_id LEFT JOIN " . DB_PREFIX . "supplier s ON s.supplier_id = p.supplier_id WHERE order_id = '" . (int)$order_id 
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[
+			public function getOrder($order_id) {
+			]]></search>
+			<add><![CDATA[
+			public function generatepo($order_product_ids) {
+				$invoice_prefix = $this->config->get('config_po_prefix');
+				$bulkpo = $this->config->get('config_po_bulkpo');
+				$considerstock = $this->config->get('config_po_considerstock');
+				$return_po = array();
+				// Find all product items from the passed order product ids which has no po's generated and has supplier
+				$product_info_query = $this->db->query("SELECT p.product_id,pd.name,p.cost,op.model,order_product_id,op.quantity,p.quantity as stockinhand, op.price,op.tax,op.total,c.currency_id,code,value,order_id,s.supplier_id,s.comments,s.name as supplier_name,s.tax_rate_id,s.dropship_fee,s.exportpath 
+						from " . DB_PREFIX . "order_product op
+						INNER JOIN " . DB_PREFIX . "product p ON p.product_id = op.product_id 
+						LEFT JOIN " . DB_PREFIX . "supplier s ON p.supplier_id = s.supplier_id 
+						INNER JOIN " . DB_PREFIX . "currency c ON s.currency_id = c.currency_id 
+						INNER JOIN " . DB_PREFIX . "product_description pd on pd.product_id = p.product_id
+						WHERE order_product_id IN (".implode(',',$order_product_ids). ") AND po_product_id=0 AND pd.language_id = '".(int)$this->config->get('config_language_id')."' AND s.supplier_id!=0 ORDER BY s.supplier_id");
+
+				$lastSupplierID = 0;
+				$orderTotal = 0;
+				foreach($product_info_query->rows as $product) {  
+					
+					//Find option price
+					$order_option_query = $this->db->query("SELECT cost,cost_prefix FROM " . DB_PREFIX . "order_option oo 
+						INNER JOIN " . DB_PREFIX . "product_option_value pov ON oo.product_option_value_id=pov.product_option_value_id
+						WHERE order_product_id='". $product['order_product_id']. "'" );
+					
+					
+					$costAdjust = 0;					
+					
+					foreach ( $order_option_query->rows as $costInfo) {
+						//$costInfo = $order_option_query->row;
+						if ($costInfo['cost_prefix'] == "+")
+							$costAdjust += 1 * $costInfo['cost'];
+						else
+							$costAdjust += -1 * $costInfo['cost'];	
+
+					}
+					
+					$productCost = ( (float) $product['cost'] )+ $costAdjust;
+					
+					//Find parent order details
+					$order_info = $this->getOrder($product['order_id']);	
+
+					$bulk_order_id=0;
+					if (!empty($bulkpo)) {
+						$open_po_query = $this->db->query("SELECT order_id FROM " . DB_PREFIX . "purchase_order 
+						WHERE order_status_id<3 AND supplier_id='".(int)$product['supplier_id']."' ORDER BY order_status_id LIMIT 1");								
+						if ($open_po_query->num_rows) {
+							$po_bulk_info = $open_po_query->row;
+							$bulk_order_id = $po_bulk_info['order_id'];
+						}
+					}
+					
+					if (!empty($considerstock)) {
+						if ($product['stockinhand']>=$product['quantity'])
+							$poqty = 0;
+						else
+							$poqty = $product['quantity'] - $product['stockinhand'];						
+					}
+					else
+						$poqty = $product['quantity'];
+					if ($poqty==0) continue;
+				
+					//If this item is for a new supplier
+					//TODO : order_status_id is hardcoded. This must change
+					if ((int)$product['supplier_id']!=$lastSupplierID){
+						
+						//Get the Seq no
+						$order_seq_query = $this->db->query("SELECT max(po_seq_no) as maxSeq from " . DB_PREFIX . "purchase_order WHERE sales_order_id='". $product['order_id']. "'" );
+						$orderSeqInfo = $order_seq_query->row;
+						if (empty($orderSeqInfo['maxSeq']))
+							$seqNo = 1;
+						else
+							$seqNo = $orderSeqInfo['maxSeq']+1;
+						if (!empty($product['exportpath'])) {
+							if (!file_exists($product['exportpath'])) {
+								$outstream = fopen($product['exportpath'], "w");
+								fputcsv($outstream,array('Order','Date','Customer First Name','Customer Last Name','Customer Email','Customer Telephone','Customer Address 1','Customer Address 2','Customer City','Customer Post Code','Customer Country','Customer Region','Product name','Model','Quantity','Price','Total'));
+								fclose($outstream);
+							}
+						}
+						$comments = $product['comments'] . "\n\n" . $order_info['comment'] ;
+						//Get the tax rate
+						$this->load->model('localisation/tax_rate');
+						$tax_info = $this->model_localisation_tax_rate->getTaxRate($product['tax_rate_id']); 
+						
+						if ($bulk_order_id==0) {
+							$this->db->query("INSERT INTO `" . DB_PREFIX . "purchase_order` SET invoice_prefix = '" . $this->db->escape($invoice_prefix) . "', store_id = '" . (int)$order_info['store_id'] . 
+							"', store_name = '" . $this->db->escape($order_info['store_name']) . "',store_url = '" . $order_info['store_url'] . 
+							"', supplier_id = '" . (int)$product['supplier_id'] . "', sales_order_id = '" . (int)$order_info['order_id'] .
+							"', comments='".$this->db->escape($comments). "',send_to = '0',".
+							"delivery_charge='".(float)$product['dropship_fee']. "',".
+							" auth_token = '".md5(mt_rand())."',".
+							"order_status_id = '1', currency_id = '" . (int)$product['currency_id'] .  "', currency_code = '" . $product['code'] . 
+							"', po_seq_no = '". (int) $seqNo . "', currency_value = '" . (float)$product['value'] . "', date_added = NOW(), date_modified = NOW()");				
+							$order_id = $this->db->getLastId();
+							$return_po[] = $order_id;
+							if ($this->config->get('config_po_changeorderstatus')==1)
+								$this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id='2' WHERE order_id='".(int)$product['order_id']."'");
+						}
+						else {
+							$order_id = $bulk_order_id;
+						}
+						
+						$orderTotal = 0;	
+						$this->createPONo((int)$order_id);						
+					}
+					if (isset($tax_info['rate']))
+						$vatAmount = ((int)$product['quantity'] * $productCost) * ( (float)$tax_info['rate']/100);
+					else
+						$vatAmount = 0;
+					
+					//Added after consultation with roger
+					//$vatAmount += ((float) $product['dropship_fee'] * ( (float)$tax_info['rate']/100));
+					$ord_prod_id = 0;
+					if ($bulk_order_id!=0) {
+						$ord_prod_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "purchase_order_product WHERE order_id = '" 
+							. (int)$order_id ."' AND product_id = '" . (int)$product['product_id'] . "' and price='".$productCost."'");
+						if ($ord_prod_query->num_rows) {
+							$ord_prod_info = $ord_prod_query->row;
+							$ord_prod_id = $ord_prod_info['order_product_id'];
+							$ord_prod_qty = $ord_prod_info['quantity'];
+							$ord_prod_total = $ord_prod_info['total'];
+						}
+					}
+					if ($ord_prod_id !=0) {
+						$this->db->query("UPDATE `" . DB_PREFIX . "purchase_order_product` ".
+						" SET quantity = '" . ( $ord_prod_qty+(int)$poqty) . 
+						"', total = '" . ($ord_prod_total + ((int)$poqty * $productCost)) . 
+						"' WHERE order_product_id='".$ord_prod_id."'");
+						$po_product_id = $ord_prod_id;
+					}
+					else {
+					
+						$this->db->query("INSERT INTO `" . DB_PREFIX . "purchase_order_product` SET order_id = '" . (int)$order_id . 
+						"', product_id = '" . (int)$product['product_id'] . "',sale_order_product_id = '" . (int)$product['order_product_id'] . 
+						"', name = '" . $this->db->escape($product['name']) . "', model = '" . $this->db->escape($product['model']).
+						"', quantity = '" . (int)$poqty . "', price = '" . $productCost .  "', total = '" . (int)$poqty * $productCost . 
+						"'"); 
+						$po_product_id = $this->db->getLastId();
+					}
+					
+					$arCSV = array($order_id,date("d/m/y g:i a"),$order_info['shipping_firstname'],$order_info['shipping_lastname'],$order_info['email'],
+					$order_info['telephone'],$order_info['shipping_address_1'],$order_info['shipping_address_2'],$order_info['shipping_city'],
+					$order_info['shipping_postcode'],$order_info['shipping_country'],$order_info['shipping_zone'],
+					$product['name'],$product['model'],$poqty,$productCost,$poqty * $productCost);
+					if (!empty($product['exportpath'])) {
+						if (file_exists($product['exportpath'])) {
+							$outstream = fopen($product['exportpath'], "a");
+							fputcsv($outstream,$arCSV );
+							fclose($outstream);
+						}
+					}
+					
+					$this->db->query("UPDATE " . DB_PREFIX . "order_product SET po_product_id='".(int)$po_product_id. "' WHERE order_product_id='". (int)$product['order_product_id'] ."'");
+					$lastSupplierID = (int)$product['supplier_id'] ;	
+					$orderTotal = $orderTotal + ((int)$poqty * $productCost);
+					
+					$subTotal = $orderTotal ;
+					if (isset($tax_info['rate'])){					
+						if ($product['tax_rate_id']!=0) {
+							$vatTotal =  $subTotal *   ((float)$tax_info['rate']/100);
+							//Added after consultation with roger
+							$vatTotal += ((float) $product['dropship_fee'] * ( (float)$tax_info['rate']/100));
+						}
+					}
+					else
+						$vatTotal = 0;
+										
+					
+					//Set order status as processin
+					//$order_pro_query = $this->db->query("SELECT COUNT(*) as rowcount FROM " . DB_PREFIX . "order_product WHERE po_product_id=0 AND order_id='". $product['order_id']. "'" );
+					//$orderproInfo = $order_pro_query->row;
+					//if ($orderproInfo['rowcount']==0)
+					//	$this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id='2' WHERE order_id='".(int)$product['order_id']."'");
+					 
+					$this->db->query("UPDATE `" . DB_PREFIX . "purchase_order` SET total='". $orderTotal ."', vat='" . $vatTotal."' WHERE order_id='".(int)$order_id."'");					
+					
+					
+					$options_info = $this->getOrderOptions($product['order_id'],$product['order_product_id']);
+					
+					foreach($options_info as $option) {
+						$this->db->query("INSERT INTO " . DB_PREFIX . "purchase_order_option SET order_id = '" . (int)$order_id . "', order_product_id = '" . (int)$po_product_id . "', product_option_id = '" . (int)$option['product_option_id'] . "', product_option_value_id = '" . (int)$option['product_option_value_id'] . "', name = '" . $this->db->escape($option['name']) . "', `value` = '" . $this->db->escape($option['value']) . "', `type` = '" . $this->db->escape($option['type']) . "'"); 
+					}
+				}
+				return $return_po;
+			}
+			]]></add>
+		</operation>			
+	</file>
+
+	<file name="admin/view/template/setting/setting.tpl">
+		<operation>
+			<search position="before" offset="1"><![CDATA[
+			<legend><?php echo $text_voucher; ?></legend>
+			]]></search>
+			<add><![CDATA[		
+			<fieldset>
+			<legend><?php echo $text_po; ?></legend>			
+			
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_prefix"><span data-original-title="<?php echo $help_po_prefix; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_prefix; ?></span></label>
+				 <div class="col-sm-10">
+					<input type="text" class="form-control" name="config_po_prefix" id="config_po_prefix" value="<?php echo $config_po_prefix; ?>" placeholder="<?php echo $entry_po_prefix; ?>"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_frommail"><span data-original-title="<?php echo $help_po_frommail; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_frommail; ?></span></label>
+				 <div class="col-sm-10">
+					<input type="text" class="form-control" name="config_po_frommail" id="config_po_frommail" value="<?php echo $config_po_frommail; ?>"  placeholder="<?php echo $entry_po_frommail; ?>"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_ccmail"><span data-original-title="<?php echo $help_po_ccmail; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_ccmail; ?></span></label>
+				 <div class="col-sm-10">
+					<input type="text" class="form-control" name="config_po_ccmail" id="config_po_ccmail" value="<?php echo $config_po_ccmail; ?>" placeholder="<?php echo $entry_po_ccmail; ?>" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_bccmail"><span data-original-title="<?php echo $help_po_bccmail; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_bccmail; ?></span></label>
+				<div class="col-sm-10">
+				<input type="text" class="form-control" id="config_po_bccmail" name="config_po_bccmail" value="<?php echo $config_po_bccmail; ?>"  placeholder="<?php echo $entry_po_bccmail; ?>"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_calculationmethod"><?php echo $entry_po_sellpricecalculation; ?></label>
+				<div class="col-sm-10">
+				  <select class="form-control" id="config_po_calculationmethod" name="config_po_calculationmethod">
+					<option value="M" <?php if ($config_po_calculationmethod=="M") echo 'selected="selected"'; ?>><?php echo $entry_po_multiplyx; ?></option>
+					<option value="P" <?php if ($config_po_calculationmethod=="P") echo 'selected="selected"'; ?>><?php echo $entry_po_profitmargin; ?></option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_grossprofit"><span data-original-title="<?php echo $help_po_grossprofit; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_grossprofit; ?></span></label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="config_po_grossprofit" id="config_po_grossprofit" value="<?php echo $config_po_grossprofit; ?>" placeholder="<?php echo $entry_po_grossprofit; ?>" />
+				</div>
+			</div>
+			<div class="form-group">               
+				<label class="col-sm-2 control-label" for="config_po_bulkpo"><span data-original-title="<?php echo $help_po_bulkpo; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_bulkpo; ?></label></label>
+				<div class="col-sm-10">
+				<label class="radio-inline">
+				  <?php if ($config_po_bulkpo) { ?>
+				  <input type="radio" name="config_po_bulkpo" value="1" checked="checked" />
+				  <?php echo $text_yes; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_bulkpo" value="1" />
+				  <?php echo $text_yes; ?>
+				  <?php } ?>
+				</label>
+				<label class="radio-inline">
+				  <?php if (!$config_po_bulkpo) { ?>
+				  <input type="radio" name="config_po_bulkpo" value="0" checked="checked" />
+				  <?php echo $text_no; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_bulkpo" value="0" />
+				  <?php echo $text_no; ?>
+				  <?php } ?>
+				</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_auto"><span data-original-title="<?php echo $help_po_auto; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_auto; ?></span></label>
+				<div class="col-sm-10">
+				<label class="radio-inline">
+				  <?php if ($config_po_auto) { ?>
+				  <input type="radio" name="config_po_auto" value="1" checked="checked" />
+				  <?php echo $text_yes; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_auto" value="1" />
+				  <?php echo $text_yes; ?>
+				  <?php } ?>
+				</label>
+				<label class="radio-inline">
+				  <?php if (!$config_po_auto) { ?>
+				  <input type="radio" name="config_po_auto" value="0" checked="checked" />
+				  <?php echo $text_no; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_auto" value="0" />
+				  <?php echo $text_no; ?>
+				  <?php } ?>
+				</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_considerstock"><span data-original-title="<?php echo $help_po_considerstock; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_considerstock; ?></span></label>
+				<div class="col-sm-10">
+				<label class="radio-inline">
+				  <?php if ($config_po_considerstock) { ?>
+				  <input type="radio" name="config_po_considerstock" value="1" checked="checked" />
+				  <?php echo $text_yes; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_considerstock" value="1" />
+				  <?php echo $text_yes; ?>
+				  <?php } ?>
+				</label>
+				<label class="radio-inline">
+				  <?php if (!$config_po_considerstock) { ?>
+				  <input type="radio" name="config_po_considerstock" value="0" checked="checked" />
+				  <?php echo $text_no; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_considerstock" value="0" />
+				  <?php echo $text_no; ?>
+				  <?php } ?>
+				</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_poemail_auto"><span data-original-title="<?php echo $help_poemail_auto; ?>" data-toggle="tooltip" title=""><?php echo $entry_poemail_auto; ?></span></label>
+				<div class="col-sm-10">
+				<label class="radio-inline">
+				  <?php if ($config_poemail_auto) { ?>
+				  <input type="radio" name="config_poemail_auto" value="1" checked="checked" />
+				  <?php echo $text_yes; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_poemail_auto" value="1" />
+				  <?php echo $text_yes; ?>
+				  <?php } ?>
+				</label>
+				<label class="radio-inline">
+				  <?php if (!$config_poemail_auto) { ?>
+				  <input type="radio" name="config_poemail_auto" value="0" checked="checked" />
+				  <?php echo $text_no; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_poemail_auto" value="0" />
+				  <?php echo $text_no; ?>
+				  <?php } ?>
+				</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_changeorderstatus"><span data-original-title="<?php echo $help_change_orderaspocessing; ?>" data-toggle="tooltip" title=""><?php echo $entry_change_orderaspocessing; ?></span></label>
+				<div class="col-sm-10">
+				<label class="radio-inline">
+				  <?php if ($config_po_changeorderstatus) { ?>
+				  <input type="radio" name="config_po_changeorderstatus" value="1" checked="checked" />
+				  <?php echo $text_yes; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_changeorderstatus" value="1" />
+				  <?php echo $text_yes; ?>
+				  <?php } ?>
+				</label>
+				<label class="radio-inline">
+				  <?php if (!$config_po_changeorderstatus) { ?>
+				  <input type="radio" name="config_po_changeorderstatus" value="0" checked="checked" />
+				  <?php echo $text_no; ?>
+				  <?php } else { ?>
+				  <input type="radio" name="config_po_changeorderstatus" value="0" />
+				  <?php echo $text_no; ?>
+				  <?php } ?>
+				</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_autostatus"><span data-original-title="<?php echo $help_po_autostatus; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_autostatus; ?></span></label>
+				<div class="col-sm-10">
+					<select class="form-control" name="config_po_autostatus" id="config_po_autostatus">
+					<?php foreach ($order_statuses as $order_status) { ?>
+					  <?php if ($order_status['order_status_id'] == $config_po_autostatus) { ?>
+					  <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+					  <?php } else { ?>
+					  <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+					  <?php } ?>
+					  <?php } ?>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="config_po_lockstatus"><span data-original-title="<?php echo $help_po_lockstatus; ?>" data-toggle="tooltip" title=""><?php echo $entry_po_lockstatus; ?></span></label>
+				<div class="col-sm-10">
+					<select class="form-control" name="config_po_lockstatus" id="config_po_lockstatus">
+					<option value="0" selected="selected"><?php echo $text_none; ?></option>
+					  <?php foreach ($order_statuses as $order_status) { ?>
+					  <?php if ($order_status['order_status_id'] == $config_po_lockstatus) { ?>
+					  <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+					  <?php } else { ?>
+					  <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+					  <?php } ?>
+					  <?php } ?>
+					</select>
+				</div>
+			</div>				
+			</fieldset>		
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/language/*/setting/setting.php">
+		<operation>
+			<search position="before"><![CDATA[
+			$_['entry_invoice_prefix']
+			]]></search>
+			<add><![CDATA[		
+			$_['entry_po_prefix']     = 'PO Prefix';
+			$_['help_po_prefix']     = 'Set the purchase order prefix (e.g. PO-2011-00). Purchase order ID\'s will start at 1 for each unique prefix';
+			$_['entry_po_format']     = 'PO Format';
+			$_['help_po_format']     = 'Define Custom format for PO number. Use %id% to specify the numeric PO ID eg: PO%id%';
+			$_['text_po']     = "Purchase Order";
+			$_['entry_po_frommail']     = 'From Email';
+			$_['help_po_frommail']     = 'Emails to the supplier will be sent from the email specified';
+			$_['entry_po_ccmail']     = 'CC Email';
+			$_['help_po_ccmail']     = 'All emails to the supplier will be copied to this email specified';
+			$_['entry_po_bccmail']     = 'BCC Email';
+			$_['help_po_bccmail']     = 'All emails to the supplier will be BCCed to this email specified';
+			$_['entry_po_grossprofit']     = 'Gross profit in %';
+			$_['help_po_grossprofit']     = 'The sales price of the product will be calculated automatically based on your GP setting';
+			$_['entry_po_sellpricecalculation']     = 'Sale price calculation method';
+			$_['entry_po_multiplyx']     = 'Multiply with X method';
+			$_['entry_po_profitmargin']     = 'Profit margin method';
+			$_['entry_po_bulkpo']     = "Enable bulk PO";
+			$_['help_po_bulkpo']     = "When enabled all orders will be grouped by supplier and only one PO per supplier will be generated instead of one PO per order";
+			$_['entry_po_auto']     = 'Auto generate PO';
+			$_['help_po_auto']     = 'PO is generated automatically when the status of order changes to the configured one';
+			$_['entry_po_considerstock']     = 'Consider stock to generate PO';
+			$_['help_po_considerstock']     = 'PO will be generated only if you have not enough stock in hand and it will be generated for remaining quantity';
+			$_['entry_poemail_auto']     = 'Send email automatically';
+			$_['help_poemail_auto']     = 'If PO is generated automatically, then this option tells if mail has to go automatically';
+			$_['entry_change_orderaspocessing']     = 'Set order to processing';
+			$_['help_change_orderaspocessing']     = 'If enabled, the order status will be set to processing once PO is generated for it';
+			$_['entry_po_autostatus']     = 'Auto generate status';
+			$_['help_po_autostatus']     = 'Selected order status change will trigger auto generation of PO';
+			$_['entry_po_lockstatus']     = 'PO Lock status';
+			$_['help_po_lockstatus']     = 'PO will be locked from edit if PO is set to this status';
+			]]></add>
+		</operation>
+	</file>	
+	<file name="admin/controller/setting/setting.php">
+		<operation>
+			<search position="after"><![CDATA[
+			$data['entry_invoice_prefix'] = $this->language->get('entry_invoice_prefix');
+			]]></search>
+			<add><![CDATA[		
+			$data['entry_po_prefix'] = $this->language->get('entry_po_prefix');
+			$data['help_po_prefix'] = $this->language->get('help_po_prefix');
+			$data['text_po'] = $this->language->get('text_po');
+			$data['entry_po_frommail'] = $this->language->get('entry_po_frommail');
+			$data['help_po_frommail'] = $this->language->get('help_po_frommail');
+			$data['entry_po_ccmail'] = $this->language->get('entry_po_ccmail');
+			$data['help_po_ccmail'] = $this->language->get('help_po_ccmail');
+			$data['entry_po_bccmail'] = $this->language->get('entry_po_bccmail');
+			$data['help_po_bccmail'] = $this->language->get('help_po_bccmail');
+			$data['entry_po_grossprofit'] = $this->language->get('entry_po_grossprofit');
+			$data['help_po_grossprofit'] = $this->language->get('help_po_grossprofit');
+			$data['entry_po_bulkpo'] = $this->language->get('entry_po_bulkpo');
+			$data['help_po_bulkpo'] = $this->language->get('help_po_bulkpo');
+			$data['entry_po_auto'] = $this->language->get('entry_po_auto');
+			$data['help_po_auto'] = $this->language->get('help_po_auto');
+			$data['entry_poemail_auto'] = $this->language->get('entry_poemail_auto');
+			$data['help_poemail_auto'] = $this->language->get('help_poemail_auto');
+			$data['entry_change_orderaspocessing'] = $this->language->get('entry_change_orderaspocessing');
+			$data['help_change_orderaspocessing'] = $this->language->get('help_change_orderaspocessing');
+			$data['entry_po_autostatus'] = $this->language->get('entry_po_autostatus');
+			$data['help_po_autostatus'] = $this->language->get('help_po_autostatus');
+			$data['entry_po_lockstatus'] = $this->language->get('entry_po_lockstatus');
+			$data['help_po_lockstatus'] = $this->language->get('help_po_lockstatus');
+			$data['entry_po_sellpricecalculation'] = $this->language->get('entry_po_sellpricecalculation');
+			$data['entry_po_multiplyx'] = $this->language->get('entry_po_multiplyx');
+			$data['entry_po_profitmargin'] = $this->language->get('entry_po_profitmargin');
+			$data['entry_po_considerstock'] = $this->language->get('entry_po_considerstock');
+			$data['help_po_considerstock'] = $this->language->get('help_po_considerstock');
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			if (isset($this->request->post['config_invoice_prefix'])) {
+			]]></search>
+			<add><![CDATA[		
+			if (isset($this->request->post['config_po_prefix'])) {
+			$data['config_po_prefix'] = $this->request->post['config_po_prefix'];
+			} elseif ($this->config->get('config_po_prefix')) {
+				$data['config_po_prefix'] = $this->config->get('config_po_prefix');			
+			} else {
+				$data['config_po_prefix'] = 'PO-' . date('Y') . '-00';
+			}
+			if (isset($this->request->post['config_po_frommail'])) {
+			$data['config_po_frommail'] = $this->request->post['config_po_frommail'];
+			} elseif ($this->config->get('config_po_frommail')) {
+				$data['config_po_frommail'] = $this->config->get('config_po_frommail');			
+			} else {
+				$data['config_po_frommail'] = $data['config_email'];
+			}
+			if (isset($this->request->post['config_po_ccmail'])) {
+			$data['config_po_ccmail'] = $this->request->post['config_po_ccmail'];
+			} elseif ($this->config->get('config_po_ccmail')) {
+				$data['config_po_ccmail'] = $this->config->get('config_po_ccmail');			
+			} else {
+				$data['config_po_ccmail'] = '';
+			}
+			if (isset($this->request->post['config_po_bccmail'])) {
+			$data['config_po_bccmail'] = $this->request->post['config_po_bccmail'];
+			} elseif ($this->config->get('config_po_bccmail')) {
+				$data['config_po_bccmail'] = $this->config->get('config_po_bccmail');			
+			} else {
+				$data['config_po_bccmail'] = '';
+			}		
+			if (isset($this->request->post['config_po_grossprofit'])) {
+				$data['config_po_grossprofit'] = $this->request->post['config_po_grossprofit'];
+			} elseif ($this->config->get('config_po_grossprofit')) {
+				$data['config_po_grossprofit'] = $this->config->get('config_po_grossprofit');			
+			} else {
+				$data['config_po_grossprofit'] = '0';
+			}
+			//die(isset($this->request->post['config_po_bulkpo'])."-------------");
+			if (isset($this->request->post['config_po_bulkpo'])) {
+				$data['config_po_bulkpo'] = $this->request->post['config_po_bulkpo'];
+			} elseif ($this->config->get('config_po_bulkpo')) {
+				$data['config_po_bulkpo'] = $this->config->get('config_po_bulkpo');			
+			} else {
+				$data['config_po_bulkpo'] = '0';
+			}
+			if (isset($this->request->post['config_po_autostatus'])) {
+				$data['config_po_autostatus'] = $this->request->post['config_po_autostatus'];
+			} elseif ($this->config->get('config_po_autostatus')) {
+				$data['config_po_autostatus'] = $this->config->get('config_po_autostatus');			
+			} else {
+				$data['config_po_autostatus'] = '5';
+			}
+			if (isset($this->request->post['config_po_lockstatus'])) {
+				$data['config_po_lockstatus'] = $this->request->post['config_po_lockstatus'];
+			} elseif ($this->config->get('config_po_lockstatus')) {
+				$data['config_po_lockstatus'] = $this->config->get('config_po_lockstatus');			
+			} else {
+				$data['config_po_lockstatus'] = '0';
+			}			
+			if (isset($this->request->post['config_po_auto'])) {
+				$data['config_po_auto'] = $this->request->post['config_po_auto'];
+			} elseif ($this->config->get('config_po_auto')) {
+				$data['config_po_auto'] = $this->config->get('config_po_auto');			
+			} else {
+				$data['config_po_auto'] = '0';
+			}	
+			if (isset($this->request->post['config_poemail_auto'])) {
+				$data['config_poemail_auto'] = $this->request->post['config_poemail_auto'];
+			} elseif ($this->config->get('config_poemail_auto')) {
+				$data['config_poemail_auto'] = $this->config->get('config_poemail_auto');			
+			} else {
+				$data['config_poemail_auto'] = '0';
+			}	
+			if (isset($this->request->post['config_po_changeorderstatus'])) {
+				$data['config_po_changeorderstatus'] = $this->request->post['config_po_changeorderstatus'];
+			} elseif ($this->config->get('config_po_changeorderstatus')) {
+				$data['config_po_changeorderstatus'] = $this->config->get('config_po_changeorderstatus');			
+			} else {
+				$data['config_po_changeorderstatus'] = '0';
+			}	
+			
+			if (isset($this->request->post['config_po_calculationmethod'])) {
+				$data['config_po_calculationmethod'] = $this->request->post['config_po_calculationmethod'];
+			} elseif ($this->config->get('config_po_calculationmethod')) {
+				$data['config_po_calculationmethod'] = $this->config->get('config_po_calculationmethod');			
+			} else {
+				$data['config_po_calculationmethod'] = 'P';
+			}	
+			if (isset($this->request->post['config_po_considerstock'])) {
+				$data['config_po_considerstock'] = $this->request->post['config_po_considerstock'];
+			} elseif ($this->config->get('config_po_considerstock')) {
+				$data['config_po_considerstock'] = $this->config->get('config_po_considerstock');			
+			} else {
+				$data['config_po_considerstock'] = '0';
+			}	
+			]]></add>
+		</operation>
+	</file>	
+
+	<file name="catalog/model/catalog/product.php">	
+		<operation>
+			<search position="before"><![CDATA[
+			public function getProduct($product_id) {
+			]]></search>
+			<add><![CDATA[		
+			
+			public function getProductForPO($product_id) {
+				if ($this->customer->isLogged()) {
+					$customer_group_id = $this->customer->getCustomerGroupId();
+				} else {
+					$customer_group_id = $this->config->get('config_customer_group_id');
+				}	
+				$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$customer_group_id . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$customer_group_id . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, (SELECT points FROM " . DB_PREFIX . "product_reward pr WHERE pr.product_id = p.product_id AND customer_group_id = '" . (int)$customer_group_id . "') AS reward, (SELECT ss.name FROM " . DB_PREFIX . "stock_status ss WHERE ss.stock_status_id = p.stock_status_id AND ss.language_id = '" . (int)$this->config->get('config_language_id') . "') AS stock_status, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT COUNT(*) AS total FROM " . DB_PREFIX . "review r2 WHERE r2.product_id = p.product_id AND r2.status = '1' GROUP BY r2.product_id) AS reviews, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
+				if ($query->num_rows) {
+					$query->row['price'] = ($query->row['discount'] ? $query->row['discount'] : $query->row['price']);
+					$query->row['rating'] = (int)$query->row['rating'];
+					
+					return $query->row;
+				} else {
+					return false;
+				}
+			}
+				
+			]]></add>
+		</operation>	
+	</file>
+	<file name="system/library/cart.php">
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			'price'           => ($price + $option_price),
+			]]></search>
+			<add><![CDATA[
+			'price'           =>  isset( $this->session->data['cost'][$key]) && $this->session->data['cost'][$key] ? $this->session->data['cost'][$key] :  ($price + $option_price),
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace">
+			<![CDATA[
+			'total'           => ($price + $option_price) * $quantity,
+			]]></search>
+			<add><![CDATA[
+			'total'           =>  isset( $this->session->data['cost'][$key]) && $this->session->data['cost'][$key] ? $this->session->data['cost'][$key]  * $quantity:  ($price + $option_price) * $quantity,
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			'product_id'      =>
+			]]></search>
+			<add><![CDATA[
+			'sale_order_product_id' => isset ($this->session->data['sale_order_product_id'][$key]) ? $this->session->data['sale_order_product_id'][$key] : 0,
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			public function add($product_id
+			]]></search>
+			<add><![CDATA[
+			public function addWithCost($product_id, $qty = 1, $option = array(),$recurring_id=0,$cost) {
+				$this->data = array();
+
+				$product['product_id'] = (int)$product_id;
+
+				if ($option) {
+					$product['option'] = $option;
+				}
+
+				if ($recurring_id) {
+					$product['recurring_id'] = (int)$recurring_id;
+				}
+
+				$key = base64_encode(serialize($product));
+
+				if ((int)$qty && ((int)$qty > 0)) {
+					if (!isset($this->session->data['cart'][$key])) {
+						$this->session->data['cart'][$key] = (int)$qty;
+					} else {
+						$this->session->data['cart'][$key] += (int)$qty;
+					}
+				}
+				$this->session->data['cost'][$key] = $cost;		
+			}
+			public function addPOProduct($product_id, $qty = 1, $option = array(),$recurring_id=0,$cost,$sale_order_product_id) {
+				$this->data = array();
+
+				$product['product_id'] = (int)$product_id;
+
+				if ($option) {
+					$product['option'] = $option;
+				}
+
+				if ($recurring_id) {
+					$product['recurring_id'] = (int)$recurring_id;
+				}
+
+				$key = base64_encode(serialize($product));
+
+				if ((int)$qty && ((int)$qty > 0)) {
+					if (!isset($this->session->data['cart'][$key])) {
+						$this->session->data['cart'][$key] = (int)$qty;
+					} else {
+						$this->session->data['cart'][$key] += (int)$qty;
+					}
+				}
+				$this->session->data['cost'][$key] = $cost;		
+				$this->session->data['sale_order_product_id'][$key] = $sale_order_product_id;		
+			}
+			]]></add>
+		</operation>		
+	</file>	
+	<file name="admin/model/user/user_group.php">	
+		<operation>
+			<search position="before"><![CDATA[
+			public function addPermission($user_group_id, $type, $route) {
+			]]></search>
+			<add><![CDATA[		
+			
+				
+			public function getUserGroupByName($groupname) {
+				$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "user_group` WHERE `name` = '" . $this->db->escape($groupname) . "'");
+			
+				return $query->row;
+			}
+				
+			]]></add>
+		</operation>	
+	</file>	
+	<file name="admin/controller/common/login.php">
+		<operation>
+			<search position="replace"><![CDATA[
+			$this->response->redirect($this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
+			]]>
+			</search>
+			<add><![CDATA[		
+			$this->load->model('pomgmt/po');
+			if (!$this->model_pomgmt_po->EventExists('pomgmt',  'post.order.history.add', 'pomgmt/po/generatepo')) {
+				$this->load->model('extension/event');
+				$this->model_extension_event->addEvent('pomgmt', 'post.order.history.add', 'pomgmt/po/generatepo');
+			}
+			
+			$this->load->model('pomgmt/supplier');
+			$supplierInfo = $this->model_pomgmt_supplier->getSupplierForUser($this->user->getId());
+			if (!empty($supplierInfo) && !empty($supplierInfo['cred_token'])) {
+				$this->model_pomgmt_supplier->resetSupplierCredToken($supplierInfo['supplier_id']);
+				$this->response->redirect($this->url->link('user/changepwd', 'token=' . $this->session->data['token'], 'SSL'));
+			}	
+			else
+				$this->response->redirect($this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
+			]]></add>
+		</operation>
+		
+	</file>
+	<file name="admin/controller/common/login.php">
+		<operation>
+			<search position="replace"><![CDATA[
+			
+			return new Action('common/login');
+			]]>
+			</search>
+			<add><![CDATA[		
+			if (!isset($this->request->get['auth_id']))
+				//return $this->forward('common/login');
+				return new Action('common/login');
+			if ($route=="pomgmt/po" && isset($this->request->get['auth_id']) && $this->request->get['auth_id']!="") {		
+
+				if (isset($this->request->get['order_id']) && $this->request->get['order_id']!="")   {
+					$order_id = $this->request->get['order_id'];
+					$auth_id = $this->request->get['auth_id'];
+					$po_query = $this->db->query("SELECT u.user_id,u.username,auth_token FROM " . DB_PREFIX . "purchase_order po 
+							INNER JOIN " . DB_PREFIX . "supplier s ON s.supplier_id = po.supplier_id 
+							INNER JOIN `" . DB_PREFIX . "user` u ON u.user_id = s.user_id 
+							WHERE auth_token='" . $this->db->escape($auth_id) . "' AND order_id='" . (int)$order_id . "'");					
+					if ($po_query->num_rows) {
+						$this->user->forceLogin($po_query->row['username']);
+						$this->session->data['token'] = $po_query->row['auth_token'];
+					}
+					else
+						//return $this->forward('common/login');
+						return new Action('common/login');
+				}
+				else
+					//return $this->forward('common/login');
+					return new Action('common/login');
+			}
+			else
+				//return $this->forward('common/login');
+				return new Action('common/login');
+			]]></add>
+		</operation>
+	</file>	
+	<file name="admin/controller/common/dashboard.php">
+		<operation>
+			<search position="before"><![CDATA[
+			$data['breadcrumbs'] = array();
+			]]></search>
+			<add><![CDATA[        
+			
+			$this->load->model('pomgmt/supplier');
+			$data['isSupplier'] = $this->model_pomgmt_supplier->isUserSupplier();
+			if (method_exists($this->user,'getGroupName')) 
+				$data['isAdmin'] =  strtolower($this->user->getGroupName())=="top administrator"?true:false;
+			else
+				$data['isAdmin'] = true;
+			if ($this->config->get('config_po_version')=="") {
+				//EXECUTE THE QUERIES
+			}
+			]]></add>
+		</operation>	
+	</file>
+	<file name="admin/view/template/common/dashboard.tpl">
+		<operation>
+			<search position="before"><![CDATA[
+			<div id="content">
+			]]></search>
+			<add><![CDATA[        
+			<?php if (!	$isSupplier){ ?>						
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" ><![CDATA[
+			<?php echo $footer; ?>
+			]]></search>
+			<add><![CDATA[        
+			<?php } ?>						
+			]]></add>
+		</operation>
+	</file>		
+	<file name="catalog/controller/api/cart.php"> 
+		<operation>
+			<search position="before"><![CDATA[
+			$this->cart->add($this->request->post['product_id'], $quantity, $option);
+			]]></search>
+			<add><![CDATA[        
+			if (isset($this->request->post['cost']) && $this->request->post['cost'] )
+				$this->cart->addWithCost($this->request->post['product_id'], $quantity, $option,0,$this->request->post['cost']);
+			else
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$this->cart->add($product['product_id'], $product['quantity'], $option);
+			]]></search>
+			<add><![CDATA[        
+			if (isset($product['sale_order_product_id']))
+				$this->cart->addPOProduct($product['product_id'], $product['quantity'], $option,0, $product['price'],$product['sale_order_product_id']);
+			else
+			]]></add>
+		</operation>
+	</file>
+</modification>

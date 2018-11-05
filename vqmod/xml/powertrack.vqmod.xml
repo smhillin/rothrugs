@@ -1,0 +1,256 @@
+<modification>
+    
+    <id><![CDATA[powertrack-oc22]]></id>
+    <version><![CDATA[5.0.1]]></version>
+    <author><![CDATA[support@prowebtec.com − https://www.prowebtec.com]]></author>
+    <vqmver><![CDATA[2.6.2]]></vqmver>
+    
+    
+    
+    
+    
+    
+    <file error="skip" name="catalog/controller/api/order.php">
+        <!-- 
+        Set tracking info in model in case the order page is displayed again to user in case of error for example.
+        Step 1/2
+         -->
+        <operation>
+            <search position="before"><![CDATA[if (isset($this->request->post['comment'])) {]]></search>
+            <add><![CDATA[
+                
+                if (isset($this->request->post['powertrack_trackcode'])) {
+                    $order_data['powertrack_trackcode'] = $this->request->post['powertrack_trackcode'];
+                } else {
+                    $order_data['powertrack_trackcode'] = '';
+                }
+                
+                if (isset($this->request->post['powertrack_carrier'])) {
+                    $order_data['powertrack_carrier'] = $this->request->post['powertrack_carrier'];
+                } else {
+                    $order_data['powertrack_carrier'] = '';
+                }
+                
+            ]]>
+            </add>
+        </operation>
+        
+        <!-- 
+        Set tracking info in model in case the order page is displayed again to user in case of error for example.
+        Step 2/2
+         -->
+        <operation>
+            <search position="after"><![CDATA[$keys = array(]]>
+            </search>
+            <add><![CDATA[
+            'powertrack_trackcode',
+            'powertrack_carrier',
+            ]]>
+            </add>
+        </operation>
+        
+        
+        <!-- 
+        
+        Pass powertrack request parameters (carrier_id and trakcing code) to the addOrderHistory mehtod
+        
+        
+        oc >= 2.1.0.1 
+        $this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $this->request->post['override']);
+        
+        oc < 2.1.0.1
+        $this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify']);
+        -->
+        <operation error="skip">
+            <search position="replace"><![CDATA[$this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify']]]>
+            </search>
+            <add><![CDATA[
+               $powertrack_trackcode  = $this->request->post['powertrack_trackcode'];
+               $powertrack_carrier_id = $this->request->post['powertrack_carrier'];
+               $this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $powertrack_trackcode, $powertrack_carrier_id]]></add><!-- do not indent -->
+        </operation>
+    </file>
+    
+    
+    
+    <file error="skip" name="catalog/model/checkout/order.php">
+        
+        <!-- 
+        add tracking info to the function signature
+        -->
+        <operation error="skip">
+            <search position="replace"><![CDATA[public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false]]></search>
+            <add><![CDATA[public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false, $powertrack_trackcode = '', $powertrack_carrier = '']]></add>
+        </operation>
+                
+                
+        <!-- 
+        Get my tracking info required in other steps below
+         -->
+        <operation>
+            <search position="after" error="skip"><![CDATA[if ($order_info) {]]></search>
+            <add><![CDATA[
+               $this->load->model('extension/module/powertrack_core');
+               $my_args = array(
+                   'tracking_code' => $powertrack_trackcode, 
+                   'carrier_uuid'  => $powertrack_carrier,
+                   'order_info'    => $order_info,
+               );
+               $powertrack_info = $this->model_extension_module_powertrack_core->get_powertrack_info($my_args);
+            ]]>
+            </add>
+        </operation>
+
+        <!-- =============
+        Save tracking info
+        ============== -->
+        <operation error="skip">
+            <search position="after"><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$order_status_id . "', notify = '" . (int)$notify . "', comment = '" . $this->db->escape($comment) . "', date_added = NOW()");]]></search>
+            <add><![CDATA[
+                if (! empty($powertrack_trackcode)) {
+                    /*
+                     * order_history_id may be set by my admin-username-in-comment extension, then it will update the db and we lost the $this->db->getLastId()
+                     */
+                    if(!isset($order_history_id)){
+                        $order_history_id = $this->db->getLastId();
+                    }
+
+                    /*
+                     *
+                     */
+                    $this->load->model('extension/module/powertrack_dao');
+                    $this->model_extension_module_powertrack_dao->edit_history($order_history_id, $powertrack_trackcode, $powertrack_info['carrier_uuid']);
+                    
+                    //tracking data saved. use this hook in your vqmod files.
+                    //hook_e0a35
+                }
+                
+                //even if tracking info were not saved, let deliverydate plugin to hook up
+                //hook_620ce
+            ]]>
+            </add>
+        </operation>
+        
+        <!-- 
+        Inject tracking info in email.
+         -->
+        <operation error="skip">
+            <search position="before"><![CDATA[$message .= $language->get('text_update_footer');]]></search>
+            <add><![CDATA[
+                if (! empty($powertrack_info['email_comment'])) {
+                    $message .= $powertrack_info['email_comment'] . "\n\n";
+                }
+            ]]>
+            </add>
+        </operation>
+    </file>
+    
+    
+    
+    
+    <file name="catalog/controller/account/order.php">
+        <!-- ====================================================
+           ____          _             _        __      
+          / __ \        | |           (_)      / _|     
+         | |  | |_ __ __| | ___ _ __   _ _ __ | |_ ___  
+         | |  | | '__/ _` |/ _ \ '__| | | '_ \|  _/ _ \ 
+         | |__| | | | (_| |  __/ |    | | | | | || (_) |
+          \____/|_|  \__,_|\___|_|    |_|_| |_|_| \___/ 
+
+        ===================================================== -->
+        <operation>
+            <search position="before"><![CDATA[if ($order_info['invoice_no']) {]]></search>
+            <add><![CDATA[
+            $this->load->language('module/powertrack');
+            $data['column_tracking'] = $this->language->get('powertrack_column_tracking');
+            ]]></add>
+        </operation>
+
+        <operation>
+            <search position="before"><![CDATA[$data['histories'][] = array(]]></search>
+            <add><![CDATA[
+               $this->load->model('extension/module/powertrack_core');
+               $my_args = array(
+                   'tracking_code' => $result['powertrack_trackcode'], 
+                   'carrier_uuid'  => $result['powertrack_carrier']   ,
+                   'order_info'    => $order_info,
+               );
+               $powertrack_info = $this->model_extension_module_powertrack_core->get_powertrack_info($my_args);
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <search position="after"><![CDATA[$data['histories'][] = array(]]></search>
+            <add><![CDATA[
+                'powertrack_carrier'      => isset($powertrack_info['carrier_name']) ? $powertrack_info['carrier_name'] : '',
+                'powertrack_tracknumber'  => $result['powertrack_trackcode'],
+                'powertrack_tracking_url' => isset($powertrack_info['tracking_url']) ? $powertrack_info['tracking_url'] : '',
+            ]]>
+            </add>
+        </operation>
+
+
+        <!-- ====================================================
+           ____          _             _ _     _   
+          / __ \        | |           | (_)   | |  
+         | |  | |_ __ __| | ___ _ __  | |_ ___| |_ 
+         | |  | | '__/ _` |/ _ \ '__| | | / __| __|
+         | |__| | | | (_| |  __/ |    | | \__ \ |_ 
+          \____/|_|  \__,_|\___|_|    |_|_|___/\__|
+                                                   
+        Similar to cancelor: dce3b
+        ===================================================== -->
+
+        <!-- ==========================
+        Load the module before the loop
+        =========================== -->
+        <operation>
+            <search position="after"><![CDATA[$results = $this->model_account_order->getOrders(($page - 1) * 10, 10);]]></search>
+            <add><![CDATA[
+            $this->load->model('extension/module/powertrack_core');
+            
+            $this->load->language('module/powertrack');
+            $data['powertrack_track_order'] = $this->language->get('powertrack_track_order'); 
+            ]]></add>
+        </operation>
+        
+        <!-- =============================
+        for each order get order status id
+         ==============================-->
+        <operation>
+            <search position="before"><![CDATA[$data['orders'][] = array(]]></search>
+            <add><![CDATA[
+
+            /*
+             * get order histories
+             */
+            $order_info = $this->model_account_order->getOrder($result['order_id']);            
+            $powertrack_info = $this->model_extension_module_powertrack_core->loop_over_order_histories_and_return_last_tracking_info($order_info);
+            
+            ]]></add>
+        </operation>
+        
+        <!-- =======================================
+         Inject the href of the "Track Order" button
+        =========================================-->
+        <operation>
+            <search position="after"><![CDATA['total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),]]></search>
+            <add><![CDATA[
+                'powertrack_tracking_url' => isset($powertrack_info['tracking_url']) ? $powertrack_info['tracking_url'] : '' ,
+            ]]></add>
+        </operation>
+
+    </file>
+    
+    
+    <!-- reduce search to fix aftership extension for leo -->
+    <file name="catalog/model/account/order.php">
+        <operation>
+            <search position="replace"><![CDATA[oh.comment, ]]>
+            </search>
+                                  <add><![CDATA[oh.comment, oh.powertrack_trackcode, oh.powertrack_carrier, ]]></add>
+        </operation>
+    </file>
+    
+</modification>

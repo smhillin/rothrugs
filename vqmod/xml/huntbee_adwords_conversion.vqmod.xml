@@ -1,0 +1,122 @@
+<modification>
+	<id>HUNTBEE GOOGLE ADWORDS CONVERSION SETUP FOR OC2.X</id>
+	<version>1.1</version>
+	<vqmver>2.X</vqmver>
+	<author>WWW.HUNTBEE.COM</author>
+	<!-- MENU LINK ADMIN -->
+		<!-- MENU LINKS -->
+	 	 <file name="admin/controller/setting/setting.php">			
+			<operation error="log">
+                <search position="after"><![CDATA[$data['tab_general'] = $this->language->get('tab_general');]]></search>
+                <add><![CDATA[
+				$data['tab_adwords'] = $this->language->get('tab_adwords');
+				$data['help_adwords_conversion'] = $this->language->get('help_adwords_conversion');
+				$data['entry_signup_ad_conv'] = $this->language->get('entry_signup_ad_conv');
+				$data['entry_sale_ad_conv'] = $this->language->get('entry_sale_ad_conv');
+				]]></add>
+            </operation>
+			<operation error="log">
+                <search position="before"><![CDATA[if (isset($this->request->post['config_seo_url'])) {]]></search>
+                <add><![CDATA[
+				if (isset($this->request->post['config_hb_signup_ad_conv'])) {
+					$data['config_hb_signup_ad_conv'] = $this->request->post['config_hb_signup_ad_conv'];
+				} else {
+					$data['config_hb_signup_ad_conv'] = $this->config->get('config_hb_signup_ad_conv');
+				}
+				if (isset($this->request->post['config_hb_sale_ad_conv'])) {
+					$data['config_hb_sale_ad_conv'] = $this->request->post['config_hb_sale_ad_conv'];
+				} else {
+					$data['config_hb_sale_ad_conv'] = $this->config->get('config_hb_sale_ad_conv');
+				}
+				]]></add>
+            </operation>
+        </file>		
+		
+		<file name="admin/language/*/setting/setting.php">
+            <operation error="log">
+                <search position="before"><![CDATA[$_['text_stores']]]></search>
+                <add><![CDATA[
+				$_['tab_adwords']                        = 'Adwords Conversion';
+				$_['help_adwords_conversion']            = 'Place your adwords conversion code. <a href="http://huntbee.com/opencart-google-conversion-tracking-user-guide?utm_source=vqmod_extension&utm_medium=installed_extension_oc2x&utm_campaign=adwords%20conversion%20vqmod" target="_blank">Learn More</a>';
+				$_['entry_signup_ad_conv']               = 'Google Adwords Sign Up Conversion Code';
+				$_['entry_sale_ad_conv']                 = 'Google Adwords Sale Conversion Code';
+				]]></add>
+            </operation>
+			
+        </file>
+		
+		<file name="admin/view/template/setting/setting.tpl">
+            <operation error="log">
+                <search position="before"><![CDATA[<li><a href="#tab-mail" data-toggle="tab"><?php echo $tab_mail; ?></a></li>]]>
+                </search>
+                <add><![CDATA[<li><a href="#tab-adwords" data-toggle="tab"><?php echo $tab_adwords; ?></a></li>]]>
+                </add>
+            </operation>
+			<operation error="log">
+                <search position="before"><![CDATA[<div class="tab-pane" id="tab-mail">]]>
+                </search>
+                <add><![CDATA[
+				<div class="tab-pane" id="tab-adwords">
+					<div class="alert alert-info"><?php echo $help_adwords_conversion; ?></div>
+					<div class="form-group required">
+					  <label class="col-sm-2 control-label"><?php echo $entry_signup_ad_conv; ?></span></label>
+					  <div class="col-sm-10">
+					 	<textarea name="config_hb_signup_ad_conv" rows="5" class="form-control" placeholder="<?php echo $entry_signup_ad_conv; ?>"><?php echo $config_hb_signup_ad_conv; ?></textarea>
+					  </div>
+					</div>
+					<div class="form-group required">
+					  <label class="col-sm-2 control-label"><?php echo $entry_sale_ad_conv; ?></span></label>
+					  <div class="col-sm-10">
+						<textarea name="config_hb_sale_ad_conv" rows="5" class="form-control" placeholder="<?php echo $entry_sale_ad_conv; ?>"><?php echo $config_hb_sale_ad_conv; ?></textarea>
+					  </div>
+					</div>
+				</div>
+				
+				]]>
+                </add>
+            </operation>
+        </file>
+		
+		<!--STORE FRONT END-->
+		<file name="catalog/controller/account/success.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$this->load->model('account/customer_group');]]></search>
+			<add><![CDATA[
+				$data['conv_code'] = $this->config->get('config_hb_signup_ad_conv');
+			]]></add>
+		</operation>
+		</file>
+		
+		<file name="catalog/controller/checkout/success.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$this->cart->clear();]]></search>
+			<add><![CDATA[
+				$order_id = $this->session->data['order_id'];
+				$query = $this->db->query("SELECT `total` FROM `" . DB_PREFIX . "order` WHERE order_id = '" . $order_id . "' LIMIT 1");
+				$total  = $query->row['total'];
+				$sale_conv_code = $this->config->get('config_hb_sale_ad_conv');
+				if (isset($sale_conv_code)){
+					$sale_conv_code = str_replace('0.00', $total, $sale_conv_code);
+				}
+				$data['conv_code'] = $sale_conv_code;
+			]]></add>
+		</operation>
+		</file>
+		
+		<file name="catalog/view/theme/*/template/common/success.tpl">
+            <operation error="log">
+                <search position="before"><![CDATA[<?php echo $footer; ?>]]>
+                </search>
+                <add><![CDATA[
+				<?php if (isset($conv_code)) { 
+					if (strlen($conv_code) > 5 ){
+						echo html_entity_decode($conv_code); 
+					}
+				} ?>
+					]]>
+                </add>
+            </operation>
+        </file>
+	
+
+</modification>

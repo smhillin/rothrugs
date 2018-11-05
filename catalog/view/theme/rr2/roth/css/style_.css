@@ -1,0 +1,280 @@
+/*
+Theme Name: RothRugs
+Theme URI: http://RothRugs.com/
+Description:  The RothRugs theme was designed and developed by Webinopoly Team. For more info, please call 713 805 5888
+Author: Webinopoly.com
+Author URI: www.webinopoly.com
+Version: Version 1
+*/
+@font-face {
+  font-family: 'NewBaskervilleC-BoldItalic';
+  src: url('../fonts/NewBaskervilleC-BoldItalic.eot?#iefix') format('embedded-opentype'),  url('../fonts/NewBaskervilleC-BoldItalic.otf')  format('opentype'),
+         url('../fonts/NewBaskervilleC-BoldItalic.woff') format('woff'), url('../fonts/NewBaskervilleC-BoldItalic.ttf')  format('truetype'), url('../fonts/NewBaskervilleC-BoldItalic.svg#NewBaskervilleC-BoldItalic') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+    font-family: "Lato Italic";
+    src: url("../fonts/Lato-Italic.eot?") format("eot"), url("../fonts/Lato-Italic.woff") format("woff"), url("../fonts/Lato-Italic.ttf") format("truetype"), url("../fonts/Lato-Italic.svg#Lato-Italic") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'latobold';
+    src: url('../fonts/lato-bold-webfont.eot');
+    src: url('../fonts/lato-bold-webfont.eot?#iefix') format('embedded-opentype'),  url('../fonts/lato-bold-webfont.woff2') format('woff2'),  url('../fonts/lato-bold-webfont.woff') format('woff'),  url('../fonts/lato-bold-webfont.ttf') format('truetype'),  url('../fonts/lato-bold-webfont.svg#latobold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Lato-Regular';
+    src: url('../fonts/Lato-Regular.eot?#iefix') format('embedded-opentype'), url('../fonts/Lato-Regular.woff') format('woff'), url('../fonts/Lato-Regular.ttf') format('truetype'), url('../fonts/Lato-Regular.svg#Lato-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'latolight';
+    src: url('../fonts/lato-light-webfont.eot');
+    src: url('../fonts/lato-light-webfont.eot?#iefix') format('embedded-opentype'),  url('../fonts/lato-light-webfont.woff2') format('woff2'),  url('../fonts/lato-light-webfont.woff') format('woff'),  url('../fonts/lato-light-webfont.ttf') format('truetype'),  url('../fonts/lato-light-webfont.svg#latolight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+  font-family: 'PhosphateInline';
+  src: url('../fonts/PhosphateInline.eot?#iefix') format('embedded-opentype'),  url('../fonts/PhosphateInline.woff') format('woff'), url('../fonts/PhosphateInline.ttf')  format('truetype'), url('../fonts/PhosphateInline.svg#PhosphateInline') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'PhosphateSolid';
+  src: url('../fonts/PhosphateSolid.eot?#iefix') format('embedded-opentype'),  url('../fonts/PhosphateSolid.woff') format('woff'), url('../fonts/PhosphateSolid.ttf')  format('truetype'), url('../fonts/PhosphateSolid.svg#PhosphateSolid') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {font-family: "Bemio Italic";
+    src: url("http://db.onlinewebfonts.com/t/ed524d3938b150b70d120697d516e805.eot");
+    src: url("http://db.onlinewebfonts.com/t/ed524d3938b150b70d120697d516e805.eot?#iefix") format("embedded-opentype"),
+    url("http://db.onlinewebfonts.com/t/ed524d3938b150b70d120697d516e805.woff2") format("woff2"),
+    url("http://db.onlinewebfonts.com/t/ed524d3938b150b70d120697d516e805.woff") format("woff"),
+    url("http://db.onlinewebfonts.com/t/ed524d3938b150b70d120697d516e805.ttf") format("truetype"),
+    url("http://db.onlinewebfonts.com/t/ed524d3938b150b70d120697d516e805.svg#Bemio Italic") format("svg");
+}
+
+body {
+    font-family: 'Lato-Regular';
+}
+.shpcart_div_mn {
+    border-top: solid 1px #0a2c3c;
+    border-bottom: solid 1px #0a2c3c;
+    margin-top: 20px;
+}
+.shpcrt_bx {
+    padding-top: 18px;
+    border-bottom: solid 1px gray;
+    padding-bottom: 16px;
+    /*border-top: solid 2px #e7e7e7;*/
+}
+.shpcrt_bx_end{
+    border-bottom: solid 0px gray;
+}
+.shprdct_img {
+    width: 125px;
+    float: left;
+    padding-right: 13px;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.shprdct_rght {
+    width: 75%;
+    float: left;
+}
+.shprdct_cnt {
+    font-size: 16px;
+    color: #a9a9a9;
+    font-family: 'Lato-Regular';
+    line-height: 24px;
+}
+.shpcnt_tp span {
+    color: #565656;
+}
+.shqntxtx {
+    float: left;
+    margin-right: 7px;
+}
+.qnty_dvx {
+    float: left;
+}
+.shqnt1 {
+    height: 29px;
+    float: left;
+    width: 42px;
+    border-radius: 3px 0px 0px 3px;
+    border: solid 2px #d5d5d5;
+    outline: none;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 18px;
+    color: #565656;
+    font-family: 'Lato-Regular';
+}
+.unt_ttl_tx {
+    float: right;
+    color: #565656;
+}
+.subtotal_dv {
+    font-size: 16px;
+    color: #565656;
+    font-family: 'Lato-Regular';
+    padding: 0px 3px;
+    border-bottom: solid 2px #3e5965;
+    margin-top: 15px;
+    padding-bottom: 5px;
+}
+.subtotal_dv span {
+    float: right;
+}
+.total_dvtx {
+    font-size: 20px;
+    color: #565656;
+    font-family: 'Lato-Regular';
+    padding: 0px 3px;
+    border-top: solid 2px #a9b5ba;
+    padding-top: 7px;
+}
+.total_dvtx span {
+    color: #ff4445;
+    float: right;
+}
+.chkout {
+    font-size: 16px;
+    color: #ffffff;
+    font-family: 'Lato-Regular';
+    width: 100%;
+    height: 35px;
+    background: #ff2a36;
+    border: none;
+    outline: none;
+    margin-top: 18px;
+}
+.spn_shp_prdct {
+    color: #ff4445 !important;
+}
+.button-cart{
+    padding: 3px 7px;
+}
+.shp_cart_main_in{
+    padding-bottom: 38px;
+}
+
+.input-group-btn:last-child>.btn, .input-group-btn:last-child>.btn-group {
+    margin-left: 5px;
+}
+
+.shprdct_cnt {
+    font-size: 16px;
+    color: #a9a9a9;
+    font-family: 'Lato-Regular';
+    line-height: 24px;
+}
+/*!
+ *  Font Awesome 4.4.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */@font-face {
+    font-family: 'FontAwesome';
+    src: url('../fonts/fontawesome-webfont.eot?v=4.4.0');
+    src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.4.0') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff2?v=4.4.0') format('woff2'), url('../fonts/fontawesome-webfont.woff?v=4.4.0') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.4.0') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.4.0#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal
+}
+
+.name_product{
+    width: 14%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.name_product1{
+    width: 80%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media (max-width:479px) {
+    .shpcart_div_mn {
+        border-top: solid 1px #3e5965;
+        border-bottom: solid 1px #3e5965;
+        margin-top: 20px;
+    }
+    .shpcrt_bx {
+        padding-top: 18px;
+        border-bottom: solid 1px #bfbfbf;
+        padding-bottom: 16px;
+        border-top: solid 1px #e7e7e7;
+    }
+    .shprdct_rght {
+         width: 100%; 
+        float: left;
+    }
+    .name_product{
+        width: 18%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .name_product1{
+        width: 77%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+}
+
+@media (max-width:867px) and (min-width:479px){
+    .name_product{
+        width: 15%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .name_product1{
+        width: 80%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+}
+
+@media (min-width:1091px){
+    .checkout {
+        position: fixed;
+        top: 75px;
+        z-index: 9999999;
+        width: 300px;
+        /*width: 22%;*/
+    }
+}
+@media (max-width:1090px)and (min-width:770px){
+    .checkout {
+        position: fixed;
+        top: 75px;
+        z-index: 9999999;
+        width: 219px;
+        /*width: 22%;*/
+    }
+}

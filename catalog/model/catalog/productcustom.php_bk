@@ -1,0 +1,174 @@
+<?php
+class ModelCatalogProductcustom extends Model {
+
+	public function getOptionValueInfo($option_value_id){
+		$sql = "SELECT * FROM " . DB_PREFIX . "option_value WHERE option_value_id ='" . $option_value_id . "'";
+		$query = $this->db->query($sql);
+		return $query->row;
+	}
+	public function getProductsByCategorySKU($data = array()){
+		if(empty($data['filter_category_id']) || empty($data['filter_sku'])){
+			return array();
+		}
+		$sql = "SELECT *
+			FROM " . DB_PREFIX . "product p
+			LEFT JOIN " . DB_PREFIX . "product_description pd
+			ON (p.product_id = pd.product_id)
+			LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id) ";
+		if(!empty($data['filter_option_value_id'])){
+			$sql .= " INNER JOIN " . DB_PREFIX . "product_option_value pov ON pov.product_id = p.product_id ";
+		}
+		if(!empty($data['filter_option_value_id'])){
+			$sql .= " AND pov.option_shape IN (" . $data['filter_option_value_id'] . ") ";
+		}
+		$sql .=" WHERE pd.language_id = '" . (int) $this->config->get('config_language_id') . "'
+			AND p.sku = '" . $data['filter_sku'] . "' ";
+		if(isset($data['filter_product_id'])){
+			$sql .="AND p.product_id <>'" .(int) $data['filter_product_id']."' ";
+		}
+
+		$sql .= "AND p2c.category_id IN (" . implode(',', $data['filter_category_id']) . ") GROUP BY p.`product_id` ORDER BY pd.name ASC";
+
+		$query = $this->db->query($sql);
+		return $query->rows;
+	}
+
+	public function getProductsSameModel($data = array(),$showAll=false){
+		if(empty($data['filter_model'])){
+			return array();
+		}
+		$sql = "SELECT *
+			FROM " . DB_PREFIX . "product p
+			LEFT JOIN " . DB_PREFIX . "product_description pd
+			ON (p.product_id = pd.product_id)  ";
+		if(!empty($data['filter_option_value_id']) || !empty($data['filter_option_id']) ){
+			$sql .= " INNER JOIN " . DB_PREFIX . "product_option_value pov ON pov.product_id = p.product_id ";
+		}
+		if(!empty($data['filter_option_id'])){
+			$sql .= " AND pov.option_id ='" . $data['filter_option_id'] . "'";
+		}
+		if($showAll == false){
+			if(!empty($data['filter_option_value_id'])){
+				$sql .= " AND pov.option_shape ='" . $data['filter_option_value_id'] . "' ";
+			}
+
+		}else{
+
+			if(!empty($data['product_reload']) && !empty($data['reload_option_value_id'])){
+				$sql_reload =" AND (p.product_id ='".$data['product_reload']."' OR
+					p.product_id IN(
+					SELECT p2.product_id
+					FROM " . DB_PREFIX . "product p2
+					INNER JOIN " . DB_PREFIX . "product_option_value pov2 ON pov2.product_id = p2.product_id
+					WHERE pov2.option_id ='" . $data['filter_option_id'] . "' AND pov.option_value_id <>'".$data['reload_option_value_id']."'
+					AND p2.model='".$data['filter_model']."' GROUP BY pov2.option_value_id
+					))";
+			}
+			$sql .= $sql_reload;
+		}
+
+		$sql .=" WHERE pd.language_id = '" . (int) $this->config->get('config_language_id') . "'
+			AND p.model = '" . $data['filter_model'] . "' AND p.status = 1";
+		// if(isset($data['filter_product_id'])){
+		// 	$sql .="AND p.product_id <>'" .(int) $data['filter_product_id']."' ";
+		// }
+		//var_dump($sql);
+		// $sql .="GROUP BY pov.option_value_id";
+		// var_dump($sql); die;
+		$query = $this->db->query($sql);
+		return $query->rows;
+	}
+	public function getOptionShapeSameModel($data = array(),$showAll = false){
+		if(empty($data['filter_model'])){
+			return array();
+		}
+		$sql = "SELECT p.* ,ov.`image`,pov.`option_shape`,pov.`option_id`,pov.option_value_id,pov.product_option_id,pov.product_option_value_id
+			FROM " . DB_PREFIX . "product p  ";
+		$sql .= " INNER JOIN " . DB_PREFIX . "product_option_value pov ON pov.product_id = p.product_id ";
+		$sql .="INNER JOIN oc_option_value ov ON ov.`option_value_id` = pov.`option_shape`";
+		$sql_filter = array();
+		if($showAll == FALSE){
+			if(!empty($data['filter_option_value_id'])){
+				$sql_filter[] = " pov.option_value_id = '" . $data['filter_option_value_id'] . "' ";
+			}
+		}
+		if(!empty($data['filter_option_id'])){
+			$sql_filter[] = " pov.option_id ='" . $data['filter_option_id'] . "'";
+		}
+		$sql .=" WHERE p.model = '" . $data['filter_model'] . "' ";
+		if(!empty($sql_filter)){
+			$sql .="AND ".implode('AND ', $sql_filter);
+		}
+		$sql .="GROUP BY pov.option_shape";
+		$query = $this->db->query($sql);
+		return $query->rows;
+	}
+
+	public function getCategoryByProductId($category_id){
+
+		$query = $this->db->query("SELECT pr.* FROM " . DB_PREFIX . "product_to_category pr LEFT JOIN " . DB_PREFIX . "product p ON (p.product_id = pr.product_id) WHERE p.product_id = '" . (int) $category_id . "'");
+
+		return $query->rows;
+	}
+	public function getProductOptions($product_id,$option_id){
+		$sql = "SELECT * FROM ".DB_PREFIX."product_option_value po WHERE product_id ='".$product_id."' AND option_id = '".$option_id."'";
+
+		$query = $this->db->query($sql);
+		return $query->rows;
+
+	}
+	public function getProductOptionSameOptionValueId($data = array()){
+		$sql = "SELECT * FROM ".DB_PREFIX."product p INNER JOIN ".DB_PREFIX."product_option_value pov ON pov.product_id = p.product_id WHERE option_value_id ='".$data['option_value_id']."' and option_shape ='".$data['optoin_shape']."'";
+		$query = $this->db->query($sql);
+
+		$product_option_data = array();
+		foreach($query->rows as $product){
+			$product_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_option po LEFT JOIN `" . DB_PREFIX . "option` o ON (po.option_id = o.option_id) LEFT JOIN " . DB_PREFIX . "option_description od ON (o.option_id = od.option_id) WHERE po.product_id = '" . (int) $product['product_id'] . "'   AND od.language_id = '" . (int) $this->config->get('config_language_id') . "' ORDER BY o.sort_order");
+				$product_option_color = array();
+			foreach($product_option_query->rows as $product_option){
+				$product_option_value_data = array();
+				$product_option_value_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_option_value pov LEFT JOIN " . DB_PREFIX . "option_value ov ON (pov.option_value_id = ov.option_value_id) LEFT JOIN " . DB_PREFIX . "option_value_description ovd ON (ov.option_value_id = ovd.option_value_id) WHERE pov.product_id = '" . (int) $product['product_id'] . "' AND pov.product_option_id = '" . (int) $product_option['product_option_id'] . "' AND ovd.language_id = '" . (int) $this->config->get('config_language_id') . "' ORDER BY ov.sort_order");
+					if($product_option['name'] =='Color'){
+					$product_option_color[$product_option['product_id']]['option_id'] = $product_option['product_option_id'];
+
+				}
+
+				foreach($product_option_value_query->rows as $product_option_value){
+					if($product_option['name'] =='Color'){
+					$product_option_color[$product_option['product_id']]['value_id'] = $product_option_value['product_option_value_id'];
+					}
+
+					$product_option_value_data[] = array(
+						'product_option_value_id'	 => $product_option_value['product_option_value_id'],
+						'option_value_id'			 => $product_option_value['option_value_id'],
+						'name'						 => $product_option_value['name'],
+						'image'						 => $product_option_value['image'],
+						'quantity'					 => $product_option_value['quantity'],
+						'subtract'					 => $product_option_value['subtract'],
+						'price'						 => $product_option_value['price'],
+						'msrp'						 => $product_option_value['msrp'],
+						'price_prefix'				 => $product_option_value['price_prefix'],
+						'weight'					 => $product_option_value['weight'],
+						'weight_prefix'				 => $product_option_value['weight_prefix']
+					);
+				}
+
+				$product_option_data[$product_option['name']][] = array(
+					'product_option_id'		 => $product_option['product_option_id'],
+					'product_option_value'	 => $product_option_value_data,
+					'option_id'				 => $product_option['option_id'],
+					'name'					 => $product_option['name'],
+					'type'					 => $product_option['type'],
+					'value'					 => $product_option['value'],
+					'product_id'			=>	$product_option['product_id'],
+					'required'				 => $product_option['required'],
+					'product_option_color_id'=> $product_option_color[$product_option['product_id']],
+				);
+			}
+		}
+
+		return $product_option_data;
+
+
+	}
+}

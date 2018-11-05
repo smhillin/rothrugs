@@ -1,0 +1,87 @@
+---------- Date: 2018-01-15 07:21:28 ~ IP : 103.9.15.207 ----------
+REQUEST URI : /UGWBQWHIR==/index.php?route=sale/order&token=789f7b9c74d57e64d26d23c773b3168e
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/userlib_enhance.xml
+   id        : Supporting file - Used by extensions to enhance user system library
+   version   : 1.0.0
+   vqmver    : 2.1.5
+   author    : Cart Ideas - Mail : contact@hereforsupport.com
+
+File Name    : system/library/user.php(5)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): public function login($username, $password) {
+----------------------------------------------------------------------
+
+
+---------- Date: 2018-01-15 07:30:23 ~ IP : 66.249.79.35 ----------
+REQUEST URI : /nourison-silk-infusion-sif02-yellow?filter_price_id=&lt;b=&gt;Notice=&lt;/b=&gt;:_Undefined_variable:_filter_price_id_in_=&gt;/var/www/html/catalog/view/theme/rr2/template/product/search_tpl=&gt;_on_line_=&gt;39=&gt;=&gt;Warning=&gt;:_implode():_Invalid_arguments_passed_in_=&filter_color_id=&filter_style_id=28&page=10
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/vqmod_po_mgmt.xml
+   id        : Purchase Order Management Extension
+   version   : 3.0
+   vqmver    : 1.0.0
+   author    : Ramesh Krishnamoorthy
+
+File Name    : system/library/cart.php(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): 'total'           => ($price + $option_price) * $quantity,
+
+----------------------------------------------------------------------
+
+
+---------- Date: 2018-01-15 07:30:53 ~ IP : 103.9.15.207 ----------
+REQUEST URI : /UGWBQWHIR==/index.php?route=common/logout&token=789f7b9c74d57e64d26d23c773b3168e
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/userlib_enhance.xml
+   id        : Supporting file - Used by extensions to enhance user system library
+   version   : 1.0.0
+   vqmver    : 2.1.5
+   author    : Cart Ideas - Mail : contact@hereforsupport.com
+
+File Name    : system/library/user.php(5)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): public function login($username, $password) {
+----------------------------------------------------------------------
+
+
+---------- Date: 2018-01-15 07:32:24 ~ IP : 54.36.149.17 ----------
+REQUEST URI : /nourison-heritage-hall-he13-brick?page=18
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/vqmod_po_mgmt.xml
+   id        : Purchase Order Management Extension
+   version   : 3.0
+   vqmver    : 1.0.0
+   author    : Ramesh Krishnamoorthy
+
+File Name    : system/library/cart.php(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): 'total'           => ($price + $option_price) * $quantity,
+
+----------------------------------------------------------------------
+
+
+---------- Date: 2018-01-15 07:53:49 ~ IP : 103.9.15.207 ----------
+REQUEST URI : /UGWBQWHIR==/index.php?route=common/logout&token=f353abf25d9ebf58412375f7c2bc6fca
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/userlib_enhance.xml
+   id        : Supporting file - Used by extensions to enhance user system library
+   version   : 1.0.0
+   vqmver    : 2.1.5
+   author    : Cart Ideas - Mail : contact@hereforsupport.com
+
+File Name    : system/library/user.php(5)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): public function login($username, $password) {
+----------------------------------------------------------------------
+
+
+---------- Date: 2018-01-15 07:59:09 ~ IP : 103.9.15.207 ----------
+REQUEST URI : /UGWBQWHIR==/index.php?route=sale/order/info&token=0c30a52831b3d3c1f896868623193fb3&order_id=181
+MOD DETAILS:
+   modFile   : /var/www/html/vqmod/xml/vqmod_po_mgmt.xml
+   id        : Purchase Order Management Extension
+   version   : 3.0
+   vqmver    : 1.0.0
+   author    : Ramesh Krishnamoorthy
+
+File Name    : UGWBQWHIR==/view/template/sale/order_info.tpl(7)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php echo $fraud['content']; ?>
+
+----------------------------------------------------------------------
+
+

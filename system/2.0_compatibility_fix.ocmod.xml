@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	
+	<name>2.0 Compatibility Fix</name>
+	<code>2.0_compatibility_fix</code>
+	<version>2017-10-09</version>
+	<author>Clear Thinking, LLC</author>
+	<link>http://www.getclearthinking.com/contact?inquiry=Question regarding 2.0 Compatibility Fix: </link>
+	
+	<file path="system/engine/action.php">
+		<operation error="skip">
+			<search trim="true"><![CDATA[
+				$path = '';
+			]]></search>
+			<add position="before" trim="true"><![CDATA[
+				// Clear Thinking: 2.0 Compatibility Fix
+				$parts = explode('/', str_replace('../', '', (string)$route));
+				
+				while ($parts) {
+					$file = DIR_APPLICATION . 'controller/' . implode('/', $parts) . '.php';
+					
+					if (is_file($file)) {
+						$this->file = $file;
+						
+						$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', implode('/', $parts));
+						break;
+					} else {
+						$this->method = array_pop($parts);
+					}
+				}
+				
+				if (!$this->method) {
+					$this->method = 'index';
+				}
+				
+				$this->args = $args;
+				
+				return;
+				// end
+			]]></add>
+		</operation>
+	</file>
+	
+	<file path="admin/controller/*/modification.php">
+		<operation error="skip">
+			<search trim="true"><![CDATA[
+				$files = explode(',', $file->getAttribute('path'));
+			]]></search>
+			<add position="replace" trim="true"><![CDATA[
+				// Clear Thinking: 2.0 Compatibility Fix
+				$files = explode('|', $file->getAttribute('path'));
+				// end
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search trim="true"><![CDATA[
+				$files = glob($path);
+			]]></search>
+			<add position="replace" trim="true"><![CDATA[
+				// Clear Thinking: 2.0 Compatibility Fix
+				$files = glob($path, GLOB_BRACE);
+				// end
+			]]></add>
+		</operation>
+	</file>
+	
+</modification>

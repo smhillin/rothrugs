@@ -1,0 +1,166 @@
+<modification>
+	<id>Addon for enabling custom PO ID format</id>
+	<version>1.5.3.5</version>
+	<vqmver>1.0.0</vqmver>
+	<author>Cart Ideas - Mail : contact@hereforsupport.com</author>
+
+	<file name="admin/language/english/setting/setting.php">
+		<operation>
+			<search position="after"><![CDATA[
+			$_['help_invoice_prefix']              = 'Set the invoice prefix (e.g. INV-2011-00). Invoice IDs will start at 1 for each unique prefix.';
+			]]></search>
+			<add><![CDATA[		
+			$_['entry_po_format']     = 'PO Format<span class="help">Use %id% to specify the numeric PO ID eg: PO%id%</span>';
+			]]></add>
+		</operation>
+	</file>	
+	<file name="admin/controller/setting/setting.php">
+		<operation>
+			<search position="after"><![CDATA[
+			$data['entry_invoice_prefix'] = $this->language->get('entry_invoice_prefix');
+			]]></search>
+			<add><![CDATA[		
+			$data['entry_po_format'] = $this->language->get('entry_po_format');			
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			if (isset($this->request->post['config_invoice_prefix'])) {
+			]]></search>
+			<add><![CDATA[		
+			if (isset($this->request->post['config_po_format'])) {
+			$data['config_po_format'] = $this->request->post['config_po_format'];
+			} elseif ($this->config->get('config_po_format')) {
+				$data['config_po_format'] = $this->config->get('config_po_format');			
+			} else {
+				$data['config_po_format'] = '%id%';
+			}
+			]]></add>
+		</operation>
+	</file>	
+	<file name="admin/view/template/setting/setting.tpl">
+		<operation>
+			<search position="before" offset="2"><![CDATA[
+			<td><?php echo $entry_po_frommail; ?></td>
+			]]></search>
+			<add><![CDATA[		
+            <tr>
+              <td><?php echo $entry_po_format; ?></td>
+              <td><input type="text" name="config_po_format" value="<?php echo $config_po_format; ?>" /></td>
+            </tr>
+			]]></add>
+		</operation>
+	</file>	
+
+	<file name="admin/view/template/pomgmt/po_list.tpl">
+		<operation>
+			<search position="replace"><![CDATA[
+			<?php echo $order['order_id']; ?>'><?php echo $order['order_id']; ?>
+			]]></search>
+			<add><![CDATA[
+			<?php echo $order['order_id']; ?>'><?php echo !empty($order['po_id_formatted']) ? $order['po_id_formatted'] : $order['order_id'] ; ?>
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/pomgmt/po_form.tpl">
+		<operation>
+			<search position="replace"><![CDATA[
+			echo '#'.$order_id; ?></td>
+			]]></search>
+			<add><![CDATA[
+			echo $po_formatted; ?></td>
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/model/pomgmt/po.php" error="log">	
+		<operation>
+			<search position="replace"><![CDATA[
+			$order_query = $this->db->query("SELECT  po.*,s.*,po.date_added as OrderDate,
+			]]></search>
+			<add><![CDATA[
+			$order_query = $this->db->query("SELECT  po.*, 
+			REPLACE('" . $this->config->get('config_po_format') . "','%id%',order_id) as po_id_formatted,
+			s.*,po.date_added as OrderDate,
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="after"><![CDATA[
+			'date_added'              => $order_query->row['OrderDate'],	
+			]]></search>
+			<add><![CDATA[
+			'po_id_formatted'              => $order_query->row['po_id_formatted'],	
+			]]></add>
+		</operation>	
+		<operation>
+			<search position="replace"><![CDATA[
+			$sql = "select po.*, maxshipdays,po.order_status_id as status_id,case
+			]]></search>
+			<add><![CDATA[
+			$sql = "select po.*, 
+			REPLACE('" . $this->config->get('config_po_format') . "','%id%',order_id) as po_id_formatted,
+			maxshipdays,po.order_status_id as status_id,case 
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$sql = "select po.*,case
+			]]></search>
+			<add><![CDATA[
+			$sql = "select po.*,
+			REPLACE('" . $this->config->get('config_po_format') . "','%id%',order_id) as po_id_formatted,
+			maxshipdays,po.order_status_id as status_id,case
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$order_query = $this->db->query("SELECT  po.*,s.name as supplier,s.tax_rate_id,c.title as currency,os.name as order_status FROM " . DB_PREFIX . "purchase_order po INNER JOIN " 
+			]]></search>
+			<add><![CDATA[
+			$order_query = $this->db->query("SELECT  po.*, 
+			REPLACE('" . $this->config->get('config_po_format') . "','%id%',order_id) as po_id_formatted,
+			maxshipdays,po.order_status_id as status_id, s.name as supplier,s.tax_rate_id,c.title as currency,os.name as order_status FROM " 
+			. DB_PREFIX . "purchase_order po INNER JOIN " 
+			]]></add>
+		</operation>						
+		<operation>
+			<search position="after" index="1"><![CDATA[
+			'order_id'                => $order_query->row['order_id'],
+			]]></search>
+			<add><![CDATA[
+			'po_id_formatted'                => $order_query->row['po_id_formatted'],
+			]]></add>
+		</operation>				
+	</file>
+	<file name="admin/controller/pomgmt/po.php" error="log">
+		<operation>
+			<search position="replace"><![CDATA[
+			$invoice_no = $order_info['invoice_prefix'] . $order_info['invoice_no'];
+			]]></search>
+			<add><![CDATA[
+			$invoice_no = $order_info['po_id_formatted'];
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			'order_id'        => $result['order_id'],
+			]]></search>
+			<add><![CDATA[
+			'po_id_formatted'        => $result['po_id_formatted'],
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before" index="1"><![CDATA[
+			if (isset($this->request->post['currency_value'])) {
+			]]></search>
+			<add><![CDATA[
+			if (!empty($order_info))
+				$data['po_formatted'] = $order_info['po_id_formatted'];
+			else
+				$data['po_formatted'] = "";
+			]]></add>
+		</operation>			
+	</file>	
+</modification>	
+
+

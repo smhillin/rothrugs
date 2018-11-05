@@ -1,0 +1,53 @@
+<modification>
+	<id>CC or BCC all mails sent from Opencart to any emails IDs</id>
+	<version>1.0.0</version>
+	<vqmver>2.1.5</vqmver>
+	<author>CartIdeas - contact@hereforsupport.com</author>
+	<file name="system/library/mail.php">
+		<operation>
+			<search position="after">
+			<![CDATA[
+			protected $to;
+			]]></search>
+			<add><![CDATA[
+			protected $cc;
+			protected $bcc;
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before">
+			<![CDATA[
+			public function setTo($to) {
+			]]></search>
+			<add><![CDATA[
+			public function setCc($cc) {
+				$this->cc = $cc;
+			}
+			public function setBcc($bcc) {
+				$this->bcc = $bcc;
+			}
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before">
+			<![CDATA[
+			$header .= 'Reply-To: =?UTF-8?B?' . base64_encode($this->sender) . '?=' . ' <' . $this->from . '>' . $this->newline;
+			]]></search>
+			<add><![CDATA[
+			if (!empty($this->cc))
+				$header .= 'Cc: ' . $this->cc . PHP_EOL;
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="after">
+			<![CDATA[
+			
+			$header .= 'X-Mailer: PHP/' . phpversion() . $this->newline;
+			]]></search>
+			<add><![CDATA[
+			if (!empty($this->bcc))
+				$header .= 'Bcc: ' . $this->bcc . $this->newline;
+			]]></add>
+		</operation>
+	</file>		
+</modification>	

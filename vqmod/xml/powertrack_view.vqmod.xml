@@ -1,0 +1,180 @@
+<modification>
+    
+    <id><![CDATA[powertrack-oc22]]></id>
+    <version><![CDATA[5.0.1]]></version>
+    <author><![CDATA[support@prowebtec.com − https://www.prowebtec.com]]></author>
+    <vqmver><![CDATA[2.6.2]]></vqmver>
+    
+    
+    
+    
+    
+    
+    <!-- 
+                  _           _       
+         /\      | |         (_)      
+        /  \   __| |_ __ ___  _ _ __  
+       / /\ \ / _` | '_ ` _ \| | '_ \ 
+      / ____ \ (_| | | | | | | | | | |
+     /_/    \_\__,_|_| |_| |_|_|_| |_|
+                                      
+     -->
+     
+    <file name="admin/view/template/sale/order_list.tpl">
+        
+        <!-- ============
+        add the column th
+        ============= -->
+        <operation>
+            <search position="before"><![CDATA[<td class="text-right"><?php if ($sort == 'o.total') { ?>]]></search>
+            <add><![CDATA[
+                <?php if($powertrack_cfg_show_tracking_column_in_order_list){ ?>
+                <td class="text-left">
+                    <a><?php echo $powertrack_text_tracking_code; ?></a>
+                </td>
+                <?php } ?>
+            ]]></add>
+        </operation>
+        
+        <!-- =====
+        add the td
+        ====== -->
+        <operation>
+            <search position="before"><![CDATA[<td class="text-right"><?php echo $order['total']; ?></td>]]></search>
+            <add><![CDATA[
+                <?php if($powertrack_cfg_show_tracking_column_in_order_list){ ?>
+                <td class="text-left">
+                  <div>
+                      <?php echo $order['powertrack_trackcode']; ?>
+                  </div>
+                </td>
+                <?php } ?>
+            ]]>
+            </add>
+        </operation>
+    </file>
+    
+    
+    <file name="admin/view/template/sale/order_history.tpl">
+        <operation>
+            <search position="after"><![CDATA[<td class="text-left"><?php echo $column_status; ?></td>]]></search>
+            <add><![CDATA[
+                <td class="left"><b><?php echo $powertrack_text_tracking_code; ?></td>
+            ]]>
+            </add>
+        </operation>
+
+        <operation>
+            <search position="after"><![CDATA[<td class="text-left"><?php echo $history['status']; ?></td>]]></search>
+            <add><![CDATA[
+                <td class="left">
+                    <?php 
+                    if($history['powertrack_carrier']){
+                      echo $history['powertrack_carrier'] . ' - ' . '<a href="' . $history['powertrack_tracking_url'] . '" target="_blank">' . $history['powertrack_tracknumber'] . '</a>'; 
+                    }
+                    ?>
+                </td>
+            ]]>
+            </add>
+        </operation>
+    </file>
+    
+    
+    
+    <!-- ========================================================
+        Add the select box and text box to enter shipping details
+    ========================================================= -->
+    <file name="admin/view/template/sale/order_info.tpl">
+        <operation>
+            <search position="before" offset="1"><![CDATA[$entry_notify;]]></search>
+            <add><![CDATA[
+                <?php echo $powertrack_html_fields; ?>
+            ]]></add>
+        </operation>
+
+        <operation>
+            <search position="replace"><![CDATA[+ '&notify=' +]]></search>
+            <add><![CDATA[ + <?php echo $powertrack_params_for_add_history_ajax ?> + '&notify=' +]]></add>
+        </operation>
+
+    </file>
+    
+    
+    <!--
+
+       _____      _        _             
+      / ____|    | |      | |            
+     | |     __ _| |_ __ _| | ___   __ _ 
+     | |    / _` | __/ _` | |/ _ \ / _` |
+     | |___| (_| | || (_| | | (_) | (_| |
+      \_____\__,_|\__\__,_|_|\___/ \__, |
+                                    __/ |
+                                   |___/ 
+
+    -->
+
+
+    <!-- ====================================================
+           ____          _             _        __      
+          / __ \        | |           (_)      / _|     
+         | |  | |_ __ __| | ___ _ __   _ _ __ | |_ ___  
+         | |  | | '__/ _` |/ _ \ '__| | | '_ \|  _/ _ \ 
+         | |__| | | | (_| |  __/ |    | | | | | || (_) |
+          \____/|_|  \__,_|\___|_|    |_|_| |_|_| \___/ 
+
+    ===================================================== -->    
+    <file name="catalog/view/theme/*/template/account/order_info.tpl">
+        <operation>
+            <search position="after"><![CDATA[$column_status;]]></search>
+            <add><![CDATA[<td class="text-left"><?php echo $column_tracking; ?></td>]]></add>
+        </operation>
+
+        <operation>
+            <search position="before"><![CDATA[$history['comment'];]]></search>
+            <add><![CDATA[
+                <td class="left-left">
+                    <?php if($history['powertrack_carrier']) { ?>
+                    <?php echo $history['powertrack_carrier'];?>  - <a href="<?php echo $history['powertrack_tracking_url']; ?>" target="_blank"><?php echo $history['powertrack_tracknumber']; ?></a>
+                    <?php } ?>
+                    <!-- hook_e46c1 print anything here -->
+                </td>]]></add>
+        </operation>
+    </file>
+
+    
+    <!-- ====================================================
+       ____          _             _ _     _   
+      / __ \        | |           | (_)   | |  
+     | |  | |_ __ __| | ___ _ __  | |_ ___| |_ 
+     | |  | | '__/ _` |/ _ \ '__| | | / __| __|
+     | |__| | | | (_| |  __/ |    | | \__ \ |_ 
+      \____/|_|  \__,_|\___|_|    |_|_|___/\__|
+                                               
+    ===================================================== -->
+
+    <file name="catalog/view/theme/*/template/account/order_list.tpl">
+
+        <!-- add the cancel button for OC >= 2.2 -->
+        <operation error="skip">
+            <search position="replace"><![CDATA[<a href="<?php echo $order['view']; ?>"]]></search>
+            <add><![CDATA[
+                <?php if(! empty($order['powertrack_tracking_url'])) { ?>
+                    <a target="_blank" href="<?php echo $order['powertrack_tracking_url'] ?>" data-toggle="tooltip" title="<?php echo $powertrack_track_order; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a>
+                <?php } ?> 
+                <a href="<?php echo $order['view']; ?>"]]></add>
+        </operation>
+
+        <!-- add the cancel button for OC < 2.2 -->
+        <operation error="skip">
+            <search position="replace"><![CDATA[<a href="<?php echo $order['href']; ?>"]]></search>
+            <add><![CDATA[
+                <?php if(! empty($order['powertrack_tracking_url'])) { ?>
+                    <a target="_blank" href="<?php echo $order['powertrack_tracking_url'] ?>" data-toggle="tooltip" title="<?php echo $powertrack_track_order; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a>
+                <?php } ?> 
+                <a href="<?php echo $order['href']; ?>"]]></add>
+        </operation>
+        
+    </file>
+
+    
+</modification>

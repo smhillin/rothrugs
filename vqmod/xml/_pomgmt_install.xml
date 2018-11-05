@@ -1,0 +1,115 @@
+<modification>
+	<id>DB Script Installer for PO Management extension. Can be deleted after the first login to Admin and when the extension is working fine</id>
+	<version>1.0.0</version>
+	<vqmver>2.1.5</vqmver>
+	<author>CartIdeas - contact@hereforsupport.com</author>
+	<file name="admin/controller/common/login.php">
+		<operation>
+			<search position="after"><![CDATA[
+			public function index() {			
+			]]>
+			</search>
+			<add><![CDATA[		
+			$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product LIKE 'supquantity'");
+			if (!$query->num_rows){
+				//DB is not ready yet
+				$query = $this->db->query("SHOW TABLES LIKE '".DB_PREFIX."supplier'");
+				if(!$query->num_rows)
+				{
+				   $this->db->query("CREATE TABLE ".DB_PREFIX."supplier (   supplier_id INT(11) NOT NULL AUTO_INCREMENT,   name VARCHAR(64) NOT NULL DEFAULT '',   firstname VARCHAR(32) NOT NULL DEFAULT '',   lastname VARCHAR(32) NOT NULL DEFAULT '',   address1 VARCHAR(128) NOT NULL DEFAULT '',   address2 VARCHAR(128) NULL,   city VARCHAR(128) NOT NULL,   postcode VARCHAR(10) NOT NULL,   country_id INT(11),   zone_id INT(11),   email VARCHAR(96) NOT NULL DEFAULT '',   telephone VARCHAR(32) NOT NULL DEFAULT '',   tax INT(1) NOT NULL DEFAULT 1,   status INT(1) NOT NULL DEFAULT 1,   currency_id INT(11),   tax_rate_id INT(11),   date_added DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',   comments TEXT,   PRIMARY KEY (supplier_id) ) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_bin");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."supplier` ADD    `maxshipdays` int(11) DEFAULT NULL");
+				   $this->db->query("INSERT INTO ".DB_PREFIX."order_status(language_id,name) VALUES (1,'PO Sent')");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."supplier` ADD `dropship_fee` DECIMAL(15,4) NULL DEFAULT 0");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."supplier` ADD `user_id` INT(11) NULL");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."supplier` ADD `cred_token` VARCHAR(64) NULL");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."supplier` ADD `gp_percent` DECIMAL(15,4) NULL DEFAULT 0");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."supplier` ADD `exportpath` VARCHAR(250) NULL DEFAULT ''");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."supplier ADD supplierurl VARCHAR(100) NULL");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."supplier ADD orderurl VARCHAR(250) NULL;");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."supplier ADD im VARCHAR(25) NULL");
+				   $this->db->query("INSERT INTO ".DB_PREFIX."setting SET store_id=0,`code`='config',`key`='config_po_installed',value='1',serialized='0'");
+				   $this->db->query("INSERT INTO ".DB_PREFIX."order_status(language_id,name) VALUES (1,'PO Reminder Sent')");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."supplier ADD COLUMN notes text");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."supplier ADD itemdel_fee decimal(15,4) DEFAULT 0");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."supplier ADD fileattach VARCHAR(100) DEFAULT ''");
+				   $this->db->query("CREATE VIEW suppliercompact AS SELECT s.supplier_id, s.name AS supplier FROM ".DB_PREFIX."supplier s");
+				}
+				$query = $this->db->query("SHOW TABLES LIKE '".DB_PREFIX."supplier_to_store'");
+				if(!$query->num_rows)
+				{
+				   $this->db->query("CREATE TABLE ".DB_PREFIX."supplier_to_store (   supplier_id INT(11) NOT NULL,   store_id INT(11) NOT NULL,   PRIMARY KEY (supplier_id, store_id) ) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_bin");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product LIKE 'supplier_id'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER table ".DB_PREFIX."product ADD supplier_id INT(11) NULL");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product LIKE 'cost'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE ".DB_PREFIX."product ADD cost DECIMAL(15,4) NULL DEFAULT 0.00 AFTER price");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product LIKE 'cost_currency_id'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE ".DB_PREFIX."product ADD cost_currency_id INT(11) NULL AFTER cost");
+				}
+				$query = $this->db->query("SHOW TABLES LIKE '".DB_PREFIX."purchase_order'");
+				if(!$query->num_rows)
+				{
+				   $this->db->query("CREATE TABLE `".DB_PREFIX."purchase_order` (   `order_id` int(11) NOT NULL AUTO_INCREMENT,   `invoice_no` int(11) NOT NULL DEFAULT '0',   `invoice_prefix` varchar(26) COLLATE utf8_bin NOT NULL,   `poinvoice_ref` varchar(26) COLLATE utf8_bin DEFAULT '',   `store_id` int(11) NOT NULL DEFAULT '0',   `store_name` varchar(64) COLLATE utf8_bin NOT NULL,   `store_url` varchar(255) COLLATE utf8_bin NOT NULL,   `supplier_id` int(11) NOT NULL DEFAULT '0',   `total_weight` decimal(15,4) DEFAULT '0.0000',   `total` decimal(15,4) NOT NULL DEFAULT '0.0000',   `delivery_charge` decimal(15,4) DEFAULT '0.0000',   `vat` decimal(15,4) DEFAULT '0.0000',   `sales_order_id` int(11) DEFAULT '0',   `order_status_id` int(11) NOT NULL DEFAULT '0',   `send_to` int(1) NOT NULL,   `currency_id` int(11) NOT NULL,   `currency_code` varchar(3) COLLATE utf8_bin NOT NULL,   `currency_value` decimal(15,8) NOT NULL,   `date_added` datetime NOT NULL,   `date_modified` datetime NOT NULL,   `tracking_id_s2s` varchar(32) COLLATE utf8_bin DEFAULT '',   `tracking_id_s2c` varchar(32) COLLATE utf8_bin DEFAULT '',   `delivery_time_s2s` varchar(32) COLLATE utf8_bin DEFAULT '',   `delivery_time_s2c` varchar(32) COLLATE utf8_bin DEFAULT '',   `comments` text COLLATE utf8_bin,   PRIMARY KEY (`order_id`) ) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."purchase_order  ADD `po_seq_no` int(11) NULL  DEFAULT 1");
+				   $this->db->query("ALTER TABLE `".DB_PREFIX."purchase_order` ADD `auth_token` VARCHAR(64) NULL");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."purchase_order ADD inv_value DECIMAL(15,4) NULL");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."purchase_order ADD updatestock INT(1) DEFAULT 0");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."purchase_order ADD itemdel_fee decimal(15,4) DEFAULT 0");
+				}
+				$query = $this->db->query("SHOW TABLES LIKE '".DB_PREFIX."purchase_order_product'");
+				if(!$query->num_rows)
+				{
+				   $this->db->query("CREATE TABLE `".DB_PREFIX."purchase_order_product` (   `order_product_id` int(11) NOT NULL auto_increment,   `order_id` int(11) NOT NULL,   `product_id` int(11) NOT NULL,   `sale_order_product_id` int(11) NULL DEFAULT 0,   `name` varchar(255) collate utf8_bin NOT NULL,   `model` varchar(24) collate utf8_bin NOT NULL,   `quantity` int(4) NOT NULL,   `price` decimal(15,4) NOT NULL default '0.0000',   `total` decimal(15,4) NOT NULL default '0.0000',   PRIMARY KEY  (`order_product_id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
+				   $this->db->query("ALTER TABLE ".DB_PREFIX."purchase_order_product ADD stock_added tinyint(1) NOT NULL DEFAULT 0");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."order_product LIKE 'po_product_id'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE ".DB_PREFIX."order_product  ADD po_product_id INT(11) NULL DEFAULT 0");
+				}
+				$query = $this->db->query("SHOW TABLES LIKE '".DB_PREFIX."purchase_order_option'");
+				if(!$query->num_rows)
+				{
+				   $this->db->query("CREATE TABLE `".DB_PREFIX."purchase_order_option` (   `order_option_id` int(11) NOT NULL AUTO_INCREMENT,   `order_id` int(11) NOT NULL,   `order_product_id` int(11) NOT NULL,   `product_option_id` int(11) NOT NULL,   `product_option_value_id` int(11) NOT NULL DEFAULT '0',   `name` varchar(255) COLLATE utf8_bin NOT NULL,   `value` text COLLATE utf8_bin NOT NULL,   `type` varchar(32) COLLATE utf8_bin NOT NULL,   PRIMARY KEY (`order_option_id`) ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product_option_value LIKE 'cost'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE `".DB_PREFIX."product_option_value` ADD   `cost` decimal(15,4) NOT NULL, ADD   `cost_prefix` varchar(1) COLLATE utf8_bin NOT NULL");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product LIKE 'gp_percent'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE `".DB_PREFIX."product` ADD `gp_percent` DECIMAL(15,4) NULL DEFAULT 0");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM ".DB_PREFIX."product LIKE 'reorder'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE `".DB_PREFIX."product` ADD `reorder` int(11) NULL DEFAULT 0");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."order` LIKE 'parent_order_id'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE `".DB_PREFIX."order`  ADD parent_order_id INT(11) NOT NULL DEFAULT 0");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."customer` LIKE 'agent_id'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE ".DB_PREFIX."customer ADD agent_id INT(11) NULL");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."product` LIKE 'supproducturl'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE ".DB_PREFIX."product ADD supproducturl VARCHAR(250) NULL DEFAULT ''");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."product` LIKE 'supproducttitle'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE `".DB_PREFIX."product` ADD `supproducttitle` varchar(250) DEFAULT ''");
+				}
+				$query = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."product` LIKE 'supquantity'");
+				if (!$query->num_rows){
+					$this->db->query("ALTER TABLE `".DB_PREFIX."product` ADD supquantity int(4) NOT NULL DEFAULT '0'");
+				}			
+			}
+			]]></add>
+		</operation>		
+	</file>	
+</modification>	
